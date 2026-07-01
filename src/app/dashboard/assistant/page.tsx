@@ -54,20 +54,42 @@ export default function AssistantPage() {
     setUploadedImage(null);
 
     try {
+      // Try chat first
       const result = await chatMutation.mutateAsync({
         action: "chatV2.send",
         input: {
-          prompt: input.trim() || "Analise esta imagem",
+          prompt: userMsg.content,
           images: uploadedImage ? [uploadedImage] : undefined,
         },
       });
 
+      // If AI detects an image request, auto-generate
+      let finalContent = result.text || "Pronto!";
+      let finalImageUrl = result.imageUrl;
+
+      if (result.text === "image_request" || (!result.text && userMsg.content.toLowerCase().includes("imagem") || userMsg.content.toLowerCase().includes("arte") || userMsg.content.toLowerCase().includes("crie"))) {
+        // Auto-generate image
+        try {
+          const imgResult = await chatMutation.mutateAsync({
+            action: "image.generate",
+            input: { prompt: userMsg.content },
+          });
+          if (imgResult.imageUrl) {
+            finalImageUrl = imgResult.imageUrl;
+            finalContent = imgResult.text || `Imagem gerada: "${userMsg.content}"`;
+          }
+        } catch {
+          finalContent = result.text || "Não consegui gerar a imagem. Tente de novo.";
+        }
+      }
+
       const assistantMsg: AIMessage = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: result.text || "Pronto!",
-        imageUrl: result.imageUrl,
+        content: finalContent,
+        imageUrl: finalImageUrl,
         createdAt: new Date(),
+      };
       };
 
       const final = [...updated, assistantMsg];
