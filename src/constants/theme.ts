@@ -67,5 +67,12 @@ export const STUDIO_TOOLS = [
   { key: "cover", icon: "🖼️", label: "Capas", cost: "4 pts", color: "purple" },
   { key: "anime", icon: "🎌", label: "Anime", cost: "3 pts", color: "pink" },
   { key: "avatar", icon: "👤", label: "Avatar Animado", cost: "35 pts", color: "green" },
+  { key: "video", icon: "🎥", label: "Vídeo IA", cost: "Em breve", color: "cyan" },
+  { key: "faceswap", icon: "🔄", label: "Face Swap", cost: "Em breve", color: "purple" },
+  { key: "upscale", icon: "🔍", label: "Upscale", cost: "Em breve", color: "green" },
+  { key: "bgremove", icon: "✂️", label: "Remover Fundo", cost: "Em breve", color: "pink" },
+  { key: "avatarfalante", icon: "🗣️", label: "Avatar Falante", cost: "Em breve", color: "amber" },
+  { key: "music", icon: "🎵", label: "Música IA", cost: "Em breve", color: "blue" },
+  { key: "threed", icon: "🧊", label: "3D Model", cost: "Em breve", color: "green" },
   { key: "redeem", icon: "🎁", label: "Resgatar", cost: "Grátis", color: "amber" },
 ] as const;

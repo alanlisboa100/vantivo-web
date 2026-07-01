@@ -19,6 +19,13 @@ const TOOL_ROUTES: Record<string, string> = {
   cover: "/dashboard/studio/covers",
   anime: "/dashboard/anime-studio",
   avatar: "/dashboard/avatar-animator",
+  video: "/dashboard/video-maker",
+  faceswap: "/dashboard/photo-editor",
+  upscale: "/dashboard/gallery-ai",
+  bgremove: "/dashboard/photo-editor",
+  avatarfalante: "/dashboard/avatar-animator",
+  music: "/dashboard/focus-mode",
+  threed: "/dashboard/studio",
   redeem: "/dashboard/redeem",
 };
 

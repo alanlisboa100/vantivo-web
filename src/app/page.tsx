@@ -19,6 +19,12 @@ const FEATURES = [
   { icon: Palette, title: "Anime Studio", desc: "Transforme selfies em arte anime com estilos como Ghibli, Shoujo e Cyberpunk." },
   { icon: Brain, title: "Assistente IA", desc: "Converse, peça ideias de legenda, revise textos e crie conteúdo." },
   { icon: Clock, title: "Modo Foco", desc: "Timer pomodoro inteligente com metas e streaks." },
+  { icon: Sparkles, title: "Vídeo IA", desc: "Gere vídeos a partir de texto ou imagens com Seedance 2.0 e Wan 2.7." },
+  { icon: Image, title: "Face Swap", desc: "Troque rostos em fotos e vídeos com precisão realista." },
+  { icon: Camera, title: "Avatar Falante", desc: "Transforme fotos em vídeos com áudio sincronizado." },
+  { icon: Palette, title: "Música IA", desc: "Componha músicas originais descrevendo o estilo e o mood." },
+  { icon: Sparkles, title: "Modelos 3D", desc: "Crie assets 3D de alta qualidade a partir de texto ou imagem." },
+  { icon: Image, title: "Upscale", desc: "Aumente a resolução de imagens sem perder qualidade." },
 ];
 
 const BENEFITS = [
