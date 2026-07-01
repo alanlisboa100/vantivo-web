@@ -67,7 +67,7 @@ export function ToolPage({ config }: { config: ToolConfig }) {
         action: config.action,
         input: inputPayload,
       });
-      const mediaUrl = result.imageUrl || result.url || result.output || "";
+      const mediaUrl = result.imageUrl || "";
       if (mediaUrl) setResult(mediaUrl);
 
       saveProject({
