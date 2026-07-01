@@ -72,9 +72,33 @@
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6, .font-display {
+  font-family: var(--font-space), var(--font-inter), system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* Animated gradient orbs */
+@keyframes orbFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(30px, -20px) scale(1.1); }
+  50% { transform: translate(-20px, 30px) scale(0.95); }
+  75% { transform: translate(20px, 10px) scale(1.05); }
+}
+.orb-animate {
+  animation: orbFloat 20s ease-in-out infinite;
+}
+.orb-animate:nth-child(2) {
+  animation-delay: -7s;
+  animation-duration: 25s;
+}
+.orb-animate:nth-child(3) {
+  animation-delay: -14s;
+  animation-duration: 18s;
 }
 
 /* Scrollbar */

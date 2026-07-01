@@ -4,16 +4,27 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { LogoWordmark, NeonBackdrop, PremiumBadge } from "@/components/brand";
 import { Button, Card } from "@/components/ui";
-import { Sparkles, Image, Camera, Palette, Brain, Clock, ChevronDown } from "lucide-react";
 import { useState } from "react";
+import {
+  Sparkles, Image, Camera, Palette, Brain, Clock,
+  ChevronDown, Check, Star, Zap, ArrowRight, TrendingUp,
+  Shield, Smartphone, Globe, MessageSquare
+} from "lucide-react";
 
 const FEATURES = [
-  { icon: <Sparkles size={24} />, title: "Geração de Imagens", desc: "Crie artes profissionais com IA em segundos. Descreva o que quer ver e pronto." },
-  { icon: <Camera size={24} />, title: "Editor de Fotos", desc: "Melhore, edite corpo, troque roupa, mude ângulos — tudo com comandos simples." },
-  { icon: <Image size={24} />, title: "Capas & Anúncios", desc: "Design pronto para YouTube, Instagram e TikTok. Sem precisar de Photoshop." },
-  { icon: <Palette size={24} />, title: "Anime Studio", desc: "Transforme selfies em arte anime com estilos como Ghibli, Shoujo e Cyberpunk." },
-  { icon: <Brain size={24} />, title: "Assistente IA", desc: "Converse, peça ideias de legenda, revise textos e crie conteúdo." },
-  { icon: <Clock size={24} />, title: "Modo Foco", desc: "Timer pomodoro inteligente com metas, streaks e gamificação." },
+  { icon: Sparkles, title: "Geração de Imagens", desc: "Crie artes profissionais com IA em segundos. Descreva o que quer ver e pronto." },
+  { icon: Camera, title: "Editor de Fotos", desc: "Melhore, edite corpo, troque roupa, mude ângulos — tudo com comandos simples." },
+  { icon: Image, title: "Capas & Anúncios", desc: "Design pronto para YouTube, Instagram e TikTok. Sem precisar de Photoshop." },
+  { icon: Palette, title: "Anime Studio", desc: "Transforme selfies em arte anime com estilos como Ghibli, Shoujo e Cyberpunk." },
+  { icon: Brain, title: "Assistente IA", desc: "Converse, peça ideias de legenda, revise textos e crie conteúdo." },
+  { icon: Clock, title: "Modo Foco", desc: "Timer pomodoro inteligente com metas e streaks." },
+];
+
+const BENEFITS = [
+  { icon: Zap, title: "Rápido", desc: "Imagens em segundos" },
+  { icon: Smartphone, title: "Multi-plataforma", desc: "Web + App Android" },
+  { icon: Shield, title: "Seguro", desc: "Seus dados protegidos" },
+  { icon: Globe, title: "i18n", desc: "Português e Inglês" },
 ];
 
 const FAQ = [
@@ -21,7 +32,6 @@ const FAQ = [
   { q: "Como funcionam os pontos?", a: "Cada ação (gerar imagem, editar foto, conversar) gasta pontos. Você ganha pontos ao assinar um plano ou comprar pacotes extras." },
   { q: "Posso testar antes de pagar?", a: "Sim! Crie uma conta gratuita e explore o Studio. Alguns recursos são liberados para teste." },
   { q: "Minhas criações ficam salvas?", a: "Sim, tudo fica salvo automaticamente no seu histórico e pode ser acessado de qualquer dispositivo." },
-  { q: "Qual a diferença entre os planos?", a: "A diferença é a quantidade de pontos por mês. Quanto mais pontos, mais criações você pode fazer." },
   { q: "O LISBOA funciona em inglês também?", a: "Sim! O suporte é completo em português e inglês. Você alterna no perfil." },
 ];
 
@@ -67,8 +77,9 @@ export default function LandingPage() {
             </span>
           </h1>
           <p className="text-lg text-muted max-w-2xl mx-auto mb-8 leading-relaxed">
-            Crie, edite e transforme imagens com IA premium. Capas, anúncios, anime, avatar animado, editor de fotos e muito mais — tudo em um só lugar, sem complicação.
+            Crie, edite e transforme imagens com IA premium. Capas, anúncios, anime, avatar animado, editor de fotos e muito mais — tudo em um só lugar.
           </p>
+
           <motion.div
             className="flex items-center justify-center gap-3 flex-wrap"
             initial={{ opacity: 0, y: 10 }}
@@ -78,6 +89,7 @@ export default function LandingPage() {
             <Link href="/signup">
               <Button size="lg" className="text-base px-8 py-4 shadow-[0_0_30px_rgba(34,211,238,0.3)]">
                 Começar grátis
+                <ArrowRight size={18} />
               </Button>
             </Link>
             <Link href="/login">
@@ -86,9 +98,24 @@ export default function LandingPage() {
               </Button>
             </Link>
           </motion.div>
+
+          {/* Benefits row */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            className="flex items-center justify-center gap-6 mt-10 flex-wrap"
+          >
+            {BENEFITS.map((b) => (
+              <div key={b.title} className="flex items-center gap-2 text-sm text-muted">
+                <b.icon size={16} className="text-cyan" />
+                <span className="font-semibold text-text">{b.title}</span>
+                <span className="hidden sm:inline">· {b.desc}</span>
+              </div>
+            ))}
+          </motion.div>
         </motion.div>
 
-        {/* Scroll indicator */}
         <motion.div
           className="mt-16 text-dim"
           initial={{ opacity: 0 }}
@@ -123,9 +150,9 @@ export default function LandingPage() {
               viewport={{ once: true, margin: "-50px" }}
               transition={{ delay: i * 0.08 }}
             >
-              <Card className="p-6 h-full group hover:border-cyan/20 transition-all duration-300" glow="none">
-                <div className="w-10 h-10 rounded-xl bg-cyan/10 text-cyan flex items-center justify-center mb-4 group-hover:bg-cyan/20 transition-colors">
-                  {feature.icon}
+              <Card className="p-6 h-full group hover:border-cyan/20 hover:bg-white/[0.02] transition-all duration-500" glow="none">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan/20 to-purple/20 text-cyan flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <feature.icon size={20} />
                 </div>
                 <h3 className="text-lg font-bold mb-2">{feature.title}</h3>
                 <p className="text-sm text-muted leading-relaxed">{feature.desc}</p>
@@ -150,9 +177,9 @@ export default function LandingPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-4xl mx-auto">
           {[
-            { name: "Start", price: "R$ 14,90", pts: "120 pts/mês", highlight: false, color: "purple" },
-            { name: "Pro", price: "R$ 34,90", pts: "320 pts/mês", highlight: true, color: "cyan" },
-            { name: "Ultra", price: "R$ 69,90", pts: "700 pts/mês", highlight: false, color: "green" },
+            { name: "Start", price: "R$ 14,90", pts: "120 pts/mês", highlight: false, features: ["120 pontos/mês", "Geração de imagens", "Editor básico", "Suporte email"] },
+            { name: "Pro", price: "R$ 34,90", pts: "320 pts/mês", highlight: true, features: ["320 pontos/mês", "Geração ilimitada", "Editor premium", "Anime Studio", "Suporte prioritário"] },
+            { name: "Ultra", price: "R$ 69,90", pts: "700 pts/mês", highlight: false, features: ["700 pontos/mês", "Tudo do Pro", "Avatar animado", "Modo Foco", "Suporte VIP"] },
           ].map((plan, i) => (
             <motion.div
               key={plan.name}
@@ -164,20 +191,30 @@ export default function LandingPage() {
               <Card
                 className={`p-6 text-center relative h-full ${
                   plan.highlight
-                    ? "border-cyan/40 shadow-[0_0_40px_rgba(34,211,238,0.12)] scale-105 md:scale-110"
+                    ? "border-cyan/40 shadow-[0_0_40px_rgba(34,211,238,0.12)] scale-105 md:scale-110 bg-card/80 backdrop-blur-sm"
                     : ""
                 }`}
                 glow={plan.highlight ? "cyan" : "none"}
               >
                 {plan.highlight && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <PremiumBadge>Mais usado</PremiumBadge>
+                    <PremiumBadge> Mais usado</PremiumBadge>
                   </div>
                 )}
                 <div className="mt-4">
                   <h3 className="text-xl font-black mb-1">{plan.name}</h3>
                   <p className="text-4xl font-black mb-1">{plan.price}</p>
-                  <p className="text-sm text-muted mb-6">/mês · {plan.pts}</p>
+                  <p className="text-sm text-muted mb-4">/mês · {plan.pts}</p>
+
+                  <div className="space-y-2 mb-6 text-left">
+                    {plan.features.map((f) => (
+                      <div key={f} className="flex items-center gap-2 text-sm">
+                        <Check size={14} className="text-green shrink-0" />
+                        <span className="text-muted">{f}</span>
+                      </div>
+                    ))}
+                  </div>
+
                   <Link href="/signup">
                     <Button variant={plan.highlight ? "primary" : "secondary"} className="w-full">
                       Assinar {plan.name}
@@ -215,13 +252,10 @@ export default function LandingPage() {
                 onClick={() => setOpenFaq(openFaq === i ? null : i)}
                 className="w-full text-left"
               >
-                <Card className={`p-4 transition-all ${openFaq === i ? "border-cyan/20" : ""}`} glow="none">
+                <Card className={`p-4 transition-all ${openFaq === i ? "border-cyan/20 bg-white/[0.02]" : ""}`} glow="none">
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-sm">{item.q}</span>
-                    <ChevronDown
-                      size={16}
-                      className={`text-dim transition-transform ${openFaq === i ? "rotate-180" : ""}`}
-                    />
+                    <MessageSquare size={16} className={`text-dim transition-transform duration-300 ${openFaq === i ? "rotate-180 text-cyan" : ""}`} />
                   </div>
                   {openFaq === i && (
                     <motion.p
@@ -239,23 +273,30 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* CTA final */}
-      <section className="relative z-20 max-w-3xl mx-auto px-6 pb-24 text-center">
+      {/* Final CTA */}
+      <section className="relative z-20 max-w-4xl mx-auto px-6 pb-24">
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
         >
-          <Card className="p-10" glow="cyan">
-            <h2 className="text-3xl font-black mb-3">Pronto para criar?</h2>
-            <p className="text-muted mb-6 max-w-md mx-auto">
-              Junte-se a milhares de criadores que já transformam suas ideias em arte com IA.
-            </p>
-            <Link href="/signup">
-              <Button size="lg" className="text-base px-10 py-4">
-                Criar conta gratuita
-              </Button>
-            </Link>
+          <Card className="p-10 md:p-14 text-center relative overflow-hidden" glow="cyan">
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan/5 via-transparent to-purple/5 pointer-events-none" />
+            <div className="relative z-10">
+              <Sparkles size={40} className="mx-auto mb-4 text-cyan" />
+              <h2 className="text-3xl md:text-4xl font-black mb-3">Pronto para criar?</h2>
+              <p className="text-muted mb-6 max-w-md mx-auto">
+                Junte-se a milhares de criadores que já transformam suas ideias em arte com IA.
+              </p>
+              <div className="flex items-center justify-center gap-3 flex-wrap">
+                <Link href="/signup">
+                  <Button size="lg" className="text-base px-10 py-4 shadow-[0_0_30px_rgba(34,211,238,0.3)]">
+                    Criar conta gratuita
+                    <ArrowRight size={18} />
+                  </Button>
+                </Link>
+              </div>
+            </div>
           </Card>
         </motion.div>
       </section>
@@ -264,9 +305,7 @@ export default function LandingPage() {
       <footer className="relative z-20 border-t border-white/5 py-8 text-center">
         <div className="max-w-6xl mx-auto px-6">
           <LogoWordmark size={20} className="justify-center mb-3" />
-          <p className="text-sm text-dim">
-            © 2026 LISBOA. Todos os direitos reservados.
-          </p>
+          <p className="text-sm text-dim">© 2026 LISBOA. Todos os direitos reservados.</p>
         </div>
       </footer>
     </div>

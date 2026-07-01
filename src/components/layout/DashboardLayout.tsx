@@ -59,7 +59,7 @@ function Sidebar() {
   const { t } = useI18n();
 
   return (
-    <aside className="hidden lg:flex flex-col w-64 h-screen fixed left-0 top-0 bg-bg border-r border-white/5 z-50">
+    <aside className="hidden lg:flex flex-col w-64 h-screen fixed left-0 top-0 bg-bg/90 backdrop-blur-xl border-r border-white/5 z-50">
       <Link href="/dashboard" className="flex items-center gap-3 px-6 py-5 border-b border-white/5">
         <LogoMark size={36} />
         <span className="font-black text-lg">LISBOA</span>
@@ -138,7 +138,7 @@ function BottomNav() {
 
   return (
     <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 px-3 pb-[env(safe-area-inset-bottom,6px)] pt-0">
-      <div className="bg-[rgba(5,7,20,0.97)] border border-cyan/20 rounded-[34px] shadow-[0_0_30px_rgba(34,211,238,0.15)] px-3 py-2 flex items-center justify-around">
+      <div className="bg-bg/80 backdrop-blur-xl border border-cyan/20 rounded-[34px] shadow-[0_0_40px_rgba(34,211,238,0.12)] px-3 py-2 flex items-center justify-around">
         {NAV_ITEMS.map((item) => {
           const active = pathname === item.href;
           return (
