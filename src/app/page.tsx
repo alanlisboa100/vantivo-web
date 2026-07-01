@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { LogoWordmark, NeonBackdrop, PremiumBadge } from "@/components/brand";
 import { Button, Card } from "@/components/ui";
 import { useState } from "react";
+import { SAMPLES } from "@/constants/samples";
 import {
   Sparkles, Image, Camera, Palette, Brain, Clock,
   ChevronDown, Check, Star, Zap, ArrowRight, TrendingUp,
@@ -70,6 +71,15 @@ export default function LandingPage() {
             <PremiumBadge className="mb-5">Estúdio Criativo com IA</PremiumBadge>
           </motion.div>
 
+          <div className="relative mb-8 mx-auto max-w-3xl">
+            <div className="absolute -inset-4 gradient-cyan rounded-[40px] opacity-5 blur-3xl" />
+            <div className="relative grid grid-cols-3 gap-2 rounded-[24px] overflow-hidden border border-white/5 p-1">
+              {SAMPLES.hero.slice(0, 3).map((url, i) => (
+                <img key={i} src={url} alt="" className="w-full aspect-[4/3] object-cover rounded-[16px]" loading={i === 0 ? "eager" : "lazy"} />
+              ))}
+            </div>
+          </div>
+
           <h1 className="text-5xl md:text-7xl font-black leading-[1.05] mb-5">
             Transforme ideias em{" "}
             <span className="bg-gradient-to-r from-purple via-cyan to-blue bg-clip-text text-transparent">
@@ -123,6 +133,62 @@ export default function LandingPage() {
           transition={{ delay: 0.8, y: { duration: 2, repeat: Infinity } }}
         >
           <ChevronDown size={24} className="mx-auto" />
+        </motion.div>
+      </section>
+
+      {/* Showcase - Exemplos Reais */}
+      <section className="relative z-20 max-w-6xl mx-auto px-6 pb-24">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: "-100px" }}
+          className="text-center mb-12"
+        >
+          <PremiumBadge className="mb-4">EXEMPLOS REAIS</PremiumBadge>
+          <h2 className="text-4xl font-black mb-3">Veja o que a IA pode fazer</h2>
+          <p className="text-muted max-w-xl mx-auto">
+            Imagens geradas por IA em segundos. Fotorrealismo, anime, design comercial e muito mais.
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          {SAMPLES.models.map((sample, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.05 }}
+              className="group relative rounded-2xl overflow-hidden border border-white/5 hover:border-cyan/20 transition-all duration-300"
+            >
+              <img
+                src={sample.url}
+                alt={sample.label}
+                className="w-full aspect-[4/3] object-cover group-hover:scale-105 transition-transform duration-500"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
+                <div>
+                  <p className="text-sm font-bold">{sample.label}</p>
+                  <p className="text-[11px] text-muted">{sample.desc}</p>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mt-8 text-center"
+        >
+          <Link href="/signup">
+            <Button variant="secondary" size="lg">
+              Gerar imagens como essas
+              <ArrowRight size={16} />
+            </Button>
+          </Link>
         </motion.div>
       </section>
 
