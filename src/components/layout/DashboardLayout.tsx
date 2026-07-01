@@ -56,7 +56,7 @@ function NavIcon({ name, className }: { name: string; className?: string }) {
 
 function Sidebar() {
   const pathname = usePathname();
-  const { user } = useAuth();
+  const { user, points } = useAuth();
   const { t } = useI18n();
   const [toolsOpen, setToolsOpen] = useState(false);
   const hasTools = HIDDEN_ITEMS.some(
@@ -228,7 +228,7 @@ function Sidebar() {
                 </p>
                 <p className="text-[11px] text-dim truncate">
                   {user.plan !== "free"
-                    ? `${user.points || 0} pts`
+                    ? `${points} pts`
                     : user.email}
                 </p>
               </div>
