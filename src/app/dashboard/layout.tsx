@@ -1,7 +1,7 @@
-"use client";
+export const dynamic = "force-dynamic";
 
-import { DashboardLayout } from "@/components/layout/index";
+import DashboardClientLayout from "@/components/layout/DashboardLayout";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
-  return <DashboardLayout>{children}</DashboardLayout>;
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  return <DashboardClientLayout>{children}</DashboardClientLayout>;
 }
