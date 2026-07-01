@@ -39,7 +39,7 @@ function mapUser(supabaseUser: any, profile: any): User {
     role: isAdmin ? "admin" : profile?.role || "user",
     status: profile?.status || "active",
     createdAt: new Date(profile?.created_at || Date.now()),
-    photoUrl: profile?.photo_url || "",
+    photoUrl: profile?.photo_url || profile?.avatar_url || "",
     coverUrl: profile?.cover_url || "",
     displayName: profile?.display_name || profile?.full_name || "",
   };
