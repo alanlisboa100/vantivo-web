@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/contexts/AuthContext";
 import { useI18n } from "@/lib/contexts/I18nContext";
-import { LogoMark } from "@/components/brand";
+import { LogoMark, PremiumBadge } from "@/components/brand";
 import { cn } from "@/lib/utils/cn";
 
 const NAV_ITEMS = [
@@ -36,11 +36,12 @@ function NavIcon({ name, className }: { name: string; className?: string }) {
     scan: "M3 7V5a2 2 0 012-2h2M3 17v2a2 2 0 002 2h2M17 3h2a2 2 0 012 2v2M17 21h2a2 2 0 002-2v-2",
     clock: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z",
     shield: "M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z",
+    chevron: "M9 5l7 7-7 7",
   };
 
   return (
     <svg
-      className={cn("w-5 h-5", className)}
+      className={cn("w-5 h-5 shrink-0", className)}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -57,77 +58,192 @@ function Sidebar() {
   const pathname = usePathname();
   const { user } = useAuth();
   const { t } = useI18n();
+  const [toolsOpen, setToolsOpen] = useState(false);
+  const hasTools = HIDDEN_ITEMS.some(
+    (item) => !item.adminOnly || user?.role === "admin"
+  );
 
   return (
-    <aside className="hidden lg:flex flex-col w-64 h-screen fixed left-0 top-0 bg-bg/90 backdrop-blur-xl border-r border-white/5 z-50">
-      <Link href="/dashboard" className="flex items-center gap-3 px-6 py-5 border-b border-white/5">
-        <LogoMark size={36} />
-        <span className="font-black text-lg">LISBOA</span>
-      </Link>
+    <aside className="hidden lg:flex flex-col w-64 h-screen fixed left-0 top-0 z-50">
+      {/* Glass background */}
+      <div className="absolute inset-0 bg-bg/80 backdrop-blur-2xl border-r border-white/5" />
+      <div className="absolute inset-0 bg-dots opacity-30" />
 
-      <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
-        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-dim px-3 pt-4 pb-2">
-          Principal
-        </p>
-        {NAV_ITEMS.map((item) => {
-          const active = pathname === item.href;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all",
-                active
-                  ? "bg-cyan/10 text-cyan border border-cyan/20"
-                  : "text-muted hover:text-text hover:bg-white/5"
+      {/* Content */}
+      <div className="relative flex flex-col h-full">
+        {/* Logo */}
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-3 px-6 h-[72px] border-b border-white/5 group"
+        >
+          <div className="relative">
+            <LogoMark size={36} />
+            <div className="absolute -inset-1 gradient-cyan rounded-lg opacity-0 group-hover:opacity-20 blur-md transition-opacity" />
+          </div>
+          <div>
+            <span className="font-black text-lg tracking-tight bg-gradient-to-r from-cyan to-purple bg-clip-text text-transparent">
+              LISBOA
+            </span>
+            {user?.plan && user.plan !== "free" && (
+              <p className="text-[10px] font-semibold text-dim -mt-0.5">
+                {t(`plan_${user.plan}`) || user.plan}
+              </p>
+            )}
+          </div>
+        </Link>
+
+        {/* Navigation */}
+        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-dim px-3 pt-4 pb-2">
+            {t("nav_principal") || "Principal"}
+          </p>
+          {NAV_ITEMS.map((item) => {
+            const active = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "group relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200",
+                  active
+                    ? "text-white"
+                    : "text-muted hover:text-text hover:bg-white/[0.04]"
+                )}
+              >
+                {active && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-cyan/15 via-purple/10 to-transparent rounded-xl border border-cyan/20 shadow-[0_0_20px_rgba(34,211,238,0.06)]" />
+                )}
+                <div
+                  className={cn(
+                    "relative z-10 flex items-center gap-3 w-full",
+                    active && "drop-shadow-[0_0_8px_rgba(34,211,238,0.3)]"
+                  )}
+                >
+                  <div
+                    className={cn(
+                      "flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-200",
+                      active
+                        ? "bg-cyan/20 text-cyan"
+                        : "text-muted group-hover:text-text group-hover:bg-white/5"
+                    )}
+                  >
+                    <NavIcon name={item.icon} />
+                  </div>
+                  <span>{t(item.label.toLowerCase()) || item.label}</span>
+                </div>
+              </Link>
+            );
+          })}
+
+          {hasTools && (
+            <>
+              <div className="pt-4">
+                <button
+                  onClick={() => setToolsOpen(!toolsOpen)}
+                  className="flex items-center justify-between w-full px-3 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-dim hover:text-muted transition-colors group"
+                >
+                  <span>{t("nav_tools") || "Ferramentas"}</span>
+                  <NavIcon
+                    name="chevron"
+                    className={cn(
+                      "w-4 h-4 transition-transform duration-200",
+                      toolsOpen && "rotate-90"
+                    )}
+                  />
+                </button>
+              </div>
+
+              {(toolsOpen ? HIDDEN_ITEMS : HIDDEN_ITEMS.slice(0, 2)).map((item) => {
+                if (item.adminOnly && user?.role !== "admin") return null;
+                const active = pathname.startsWith(item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      "group relative flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-200",
+                      active
+                        ? "text-white"
+                        : "text-muted hover:text-text hover:bg-white/[0.04]"
+                    )}
+                  >
+                    {active && (
+                      <div className="absolute inset-0 bg-gradient-to-r from-purple/15 via-pink/10 to-transparent rounded-xl border border-purple/20 shadow-[0_0_20px_rgba(168,85,247,0.06)]" />
+                    )}
+                    <div
+                      className={cn(
+                        "relative z-10 flex items-center gap-3 w-full",
+                        active && "drop-shadow-[0_0_8px_rgba(168,85,247,0.3)]"
+                      )}
+                    >
+                      <div
+                        className={cn(
+                          "flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-200",
+                          active
+                            ? "bg-purple/20 text-purple"
+                            : "text-muted group-hover:text-text group-hover:bg-white/5"
+                        )}
+                      >
+                        <NavIcon name={item.icon} />
+                      </div>
+                      <span>{item.label}</span>
+                    </div>
+                  </Link>
+                );
+              })}
+
+              {!toolsOpen && HIDDEN_ITEMS.length > 2 && (
+                <button
+                  onClick={() => setToolsOpen(true)}
+                  className="flex items-center gap-2 px-3 py-2 ml-2 text-xs text-dim hover:text-muted transition-colors"
+                >
+                  <span className="w-1 h-1 rounded-full bg-dim" />
+                  <span className="w-1 h-1 rounded-full bg-dim" />
+                  <span className="w-1 h-1 rounded-full bg-dim" />
+                  <span className="ml-1 text-[11px]">
+                    +{HIDDEN_ITEMS.length - 2} mais
+                  </span>
+                </button>
               )}
-            >
-              <NavIcon name={item.icon} />
-              {item.label}
-            </Link>
-          );
-        })}
+            </>
+          )}
+        </nav>
 
-        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-dim px-3 pt-6 pb-2">
-          Ferramentas
-        </p>
-        {HIDDEN_ITEMS.map((item) => {
-          if (item.adminOnly && user?.role !== "admin") return null;
-          const active = pathname.startsWith(item.href);
-          return (
+        {/* User footer */}
+        {user && (
+          <div className="relative p-3 border-t border-white/5">
             <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all",
-                active
-                  ? "bg-purple/10 text-purple border border-purple/20"
-                  : "text-muted hover:text-text hover:bg-white/5"
-              )}
+              href="/dashboard/profile"
+              className="group relative flex items-center gap-3 p-2 rounded-xl hover:bg-white/[0.04] transition-all duration-200"
             >
-              <NavIcon name={item.icon} />
-              {item.label}
+              <div className="relative shrink-0">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-cyan via-purple to-pink flex items-center justify-center text-sm font-bold shadow-[0_0_20px_rgba(34,211,238,0.15)]">
+                  {user.displayName?.[0] || user.name?.[0] || user.email?.[0] || "?"}
+                </div>
+                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green rounded-full border-2 border-bg" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold truncate group-hover:text-cyan transition-colors">
+                  {user.displayName || user.name || user.email?.split("@")[0]}
+                </p>
+                <p className="text-[11px] text-dim truncate">
+                  {user.plan !== "free"
+                    ? `${user.points || 0} pts`
+                    : user.email}
+                </p>
+              </div>
+              <div className="shrink-0">
+                <div className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">
+                  <NavIcon
+                    name="chevron"
+                    className="w-3 h-3 text-dim rotate-90"
+                  />
+                </div>
+              </div>
             </Link>
-          );
-        })}
-      </nav>
-
-      {user && (
-        <div className="p-4 border-t border-white/5">
-          <Link
-            href="/dashboard/profile"
-            className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/5 transition-colors"
-          >
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple to-cyan flex items-center justify-center text-xs font-bold">
-              {user.displayName?.[0] || user.name?.[0] || user.email?.[0] || "?"}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold truncate">{user.displayName || user.name || user.email}</p>
-              <p className="text-[11px] text-dim truncate">{user.email}</p>
-            </div>
-          </Link>
-        </div>
-      )}
+          </div>
+        )}
+      </div>
     </aside>
   );
 }
@@ -138,7 +254,7 @@ function BottomNav() {
 
   return (
     <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 px-3 pb-[env(safe-area-inset-bottom,6px)] pt-0">
-      <div className="bg-bg/80 backdrop-blur-xl border border-cyan/20 rounded-[34px] shadow-[0_0_40px_rgba(34,211,238,0.12)] px-3 py-2 flex items-center justify-around">
+      <div className="glass-strong rounded-[34px] px-3 py-2 flex items-center justify-around shadow-[0_0_60px_rgba(34,211,238,0.08)]">
         {NAV_ITEMS.map((item) => {
           const active = pathname === item.href;
           return (
@@ -146,12 +262,25 @@ function BottomNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex flex-col items-center gap-0.5 px-3 py-2 rounded-xl transition-all relative",
+                "relative flex flex-col items-center gap-0.5 px-3 py-2 rounded-xl transition-all duration-200",
                 active ? "text-cyan" : "text-dim hover:text-muted"
               )}
             >
-              <NavIcon name={item.icon} className={cn("w-5 h-5", active && "drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]")} />
-              {active && <span className="absolute -top-0.5 w-1 h-1 rounded-full bg-cyan" />}
+              {active && (
+                <div className="absolute inset-0 bg-cyan/10 rounded-xl border border-cyan/20" />
+              )}
+              <div className="relative">
+                <NavIcon
+                  name={item.icon}
+                  className={cn(
+                    "w-5 h-5 transition-all duration-200",
+                    active && "drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]"
+                  )}
+                />
+                {active && (
+                  <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-cyan shadow-[0_0_6px_rgba(34,211,238,0.6)]" />
+                )}
+              </div>
             </Link>
           );
         })}
@@ -160,7 +289,9 @@ function BottomNav() {
             href="/dashboard/admin"
             className={cn(
               "flex flex-col items-center gap-0.5 px-3 py-2 rounded-xl transition-all",
-              pathname.startsWith("/dashboard/admin") ? "text-purple" : "text-dim hover:text-muted"
+              pathname.startsWith("/dashboard/admin")
+                ? "text-purple"
+                : "text-dim hover:text-muted"
             )}
           >
             <NavIcon name="shield" className="w-5 h-5" />
@@ -171,11 +302,22 @@ function BottomNav() {
   );
 }
 
+function FloatingOrbs() {
+  return (
+    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan/5 rounded-full blur-[120px] orb-animate opacity-40" />
+      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-purple/5 rounded-full blur-[100px] orb-animate opacity-30" style={{ animationDelay: "-7s" }} />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue/4 rounded-full blur-[150px] orb-animate opacity-20" style={{ animationDelay: "-14s" }} />
+    </div>
+  );
+}
+
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-bg">
+    <div className="min-h-screen bg-bg relative">
+      <FloatingOrbs />
       <Sidebar />
-      <div className="lg:pl-64 pb-20 lg:pb-0">
+      <div className="lg:pl-64 pb-20 lg:pb-0 relative z-10">
         <main className="min-h-screen">{children}</main>
       </div>
       <BottomNav />

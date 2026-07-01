@@ -90,7 +90,6 @@ export default function AssistantPage() {
         imageUrl: finalImageUrl,
         createdAt: new Date(),
       };
-      };
 
       const final = [...updated, assistantMsg];
       setMessages(final);
