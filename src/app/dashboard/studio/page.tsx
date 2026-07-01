@@ -3,8 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/contexts/AuthContext";
 import { useI18n } from "@/lib/contexts/I18nContext";
-import { NeonBackdrop, PremiumBadge } from "@/components/brand";
-import { Card, Button } from "@/components/ui";
+import { PointsDisplay, PremiumBadge } from "@/components/brand";
+import { Button } from "@/components/ui";
 import { STUDIO_TOOLS } from "@/constants/theme";
 import { motion } from "framer-motion";
 
@@ -29,100 +29,107 @@ const TOOL_ROUTES: Record<string, string> = {
   redeem: "/dashboard/redeem",
 };
 
+const CATEGORIES = [
+  { id: "all", label: "Todas" },
+  { id: "criacao", label: "Criação" },
+  { id: "edicao", label: "Edição" },
+  { id: "video", label: "Vídeo" },
+  { id: "avancado", label: "Avançado" },
+];
+
+const TOOL_CATEGORY: Record<string, string> = {
+  assistant: "criacao",
+  enhance: "edicao",
+  body: "edicao",
+  tryon: "edicao",
+  headshot: "edicao",
+  camera: "edicao",
+  product: "edicao",
+  cover: "criacao",
+  anime: "criacao",
+  avatar: "video",
+  video: "video",
+  faceswap: "edicao",
+  upscale: "avancado",
+  bgremove: "edicao",
+  avatarfalante: "video",
+  music: "avancado",
+  threed: "avancado",
+  redeem: "avancado",
+};
+
 export default function StudioPage() {
   const { t } = useI18n();
   const { points } = useAuth();
   const router = useRouter();
 
   return (
-    <div className="relative min-h-screen">
-      <NeonBackdrop />
-      <div className="relative z-10 px-4 pt-4 pb-32">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-dim mb-1">{t("studio.kicker")}</p>
-            <h1 className="text-3xl font-black">{t("studio.title")}</h1>
-          </div>
-          <div className="flex items-center gap-1.5 bg-purple/10 border border-purple/20 rounded-full px-3.5 py-1.5">
-            <span className="text-yellow-400 text-xs">⚡</span>
-            <span className="text-sm font-bold">{points}</span>
-            <span className="text-[10px] text-muted">{t("common.pts")}</span>
+    <div className="min-h-screen bg-bg">
+      {/* ─── Hero Section ─── */}
+      <section className="relative px-4 pt-8 pb-12 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-cyan/5 via-transparent to-transparent" />
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-purple/10 rounded-full blur-[150px] orb-animate opacity-30" />
+        <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-cyan/8 rounded-full blur-[120px] orb-animate opacity-20" style={{ animationDelay: "-7s" }} />
+
+        <div className="relative z-10 max-w-5xl mx-auto">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <PremiumBadge variant="cyan">LISBOA STUDIO</PremiumBadge>
+              <h1 className="text-4xl font-black mt-2">Ferramentas Criativas</h1>
+              <p className="text-muted mt-1 max-w-xl">
+                Gere imagens, edite fotos, crie vídeos, transforme em anime, e muito mais — tudo com IA.
+              </p>
+            </div>
+            <div className="hidden sm:block">
+              <PointsDisplay points={points} />
+            </div>
           </div>
         </div>
+      </section>
 
-        {/* Hero */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="relative min-h-[260px] rounded-[30px] bg-card/50 border border-white/5 p-6 mb-5 overflow-hidden"
-        >
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute -top-16 -right-10 w-[200px] h-[200px] rounded-full bg-purple/20 blur-[80px]" />
-            <div className="absolute bottom-0 left-0 w-[150px] h-[150px] rounded-full bg-cyan/15 blur-[80px]" />
+      {/* ─── Tools Grid ─── */}
+      <section className="px-4 pb-32">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            {STUDIO_TOOLS.map((tool, i) => {
+              const isAvailable = !tool.cost.includes("Breve");
+              return (
+                <motion.button
+                  key={tool.key}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.03, duration: 0.3 }}
+                  onClick={() => isAvailable && router.push(TOOL_ROUTES[tool.key] || "/dashboard/studio")}
+                  disabled={!isAvailable}
+                  className="group relative text-left p-4 rounded-2xl border border-white/5 bg-card/30 hover:bg-card/60 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
+                >
+                  {/* Hover glow */}
+                  <div className={`absolute inset-0 bg-gradient-to-br from-${tool.color}/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+
+                  <div className="relative z-10">
+                    {/* Icon with colored background */}
+                    <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl mb-3 transition-transform duration-300 group-hover:scale-110`}
+                      style={{ background: `color-mix(in srgb, var(--${tool.color}) 15%, transparent)` }}>
+                      {tool.icon}
+                    </div>
+
+                    <p className="text-sm font-bold mb-1 group-hover:text-cyan transition-colors">{tool.label}</p>
+
+                    {/* Cost badge */}
+                    <span className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                      isAvailable
+                        ? "text-green border-green/20 bg-green/5"
+                        : "text-dim border-white/10 bg-white/5"
+                    }`}>
+                      {isAvailable ? tool.cost : "🔜"}
+                    </span>
+                  </div>
+                </motion.button>
+              );
+            })}
           </div>
-
-          <div className="relative z-10">
-            <div className="flex items-center gap-2 mb-3">
-              <PremiumBadge>PREMIUM</PremiumBadge>
-              <span className="flex items-center gap-1 text-[10px] text-green font-semibold">
-                <span className="w-1.5 h-1.5 rounded-full bg-green animate-pulse" />
-                {t("common.ready")}
-              </span>
-            </div>
-            <h1 className="text-2xl font-black leading-tight mb-2">{t("studio.heroTitle")}</h1>
-            <p className="text-xs text-muted mb-4">{t("studio.heroSubtitle")}</p>
-            <Button onClick={() => router.push("/dashboard/assistant")}>{t("studio.openAssistant")}</Button>
-          </div>
-        </motion.div>
-
-        {/* Quick Flow */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="flex gap-3 mb-5 overflow-x-auto pb-1"
-        >
-          {[
-            { icon: "🎯", label: t("studio.flowChoose"), text: t("studio.flowChooseText") },
-            { icon: "📤", label: t("studio.flowSend"), text: t("studio.flowSendText") },
-            { icon: "🔄", label: t("studio.flowRedo"), text: t("studio.flowRedoText") },
-          ].map((step, i) => (
-            <Card key={i} className="min-w-[200px] p-4 flex-shrink-0" glow="cyan">
-              <span className="text-2xl mb-2 block">{step.icon}</span>
-              <p className="text-sm font-bold mb-1">{step.label}</p>
-              <p className="text-xs text-muted">{step.text}</p>
-            </Card>
-          ))}
-        </motion.div>
-
-        {/* Tools Grid */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-dim mb-3">{t("studio.sectionTitle")}</p>
-          <div className="grid grid-cols-2 gap-3">
-            {STUDIO_TOOLS.map((tool) => (
-              <Card
-                key={tool.key}
-                className="p-4 cursor-pointer hover:bg-white/5 transition-colors relative overflow-hidden"
-                glow={tool.color as any}
-                onClick={() => router.push(TOOL_ROUTES[tool.key] || `/dashboard/studio`)}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-2xl">{tool.icon}</span>
-                  <span className="text-[10px] font-bold text-dim bg-white/5 px-2 py-0.5 rounded-full">
-                    {tool.cost}
-                  </span>
-                </div>
-                <p className="text-sm font-bold">{tool.label}</p>
-              </Card>
-            ))}
-          </div>
-        </motion.div>
-      </div>
+        </div>
+      </section>
     </div>
   );
 }
