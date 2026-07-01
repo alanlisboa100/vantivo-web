@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -8,7 +9,7 @@ import { Button, Input } from "@/components/ui";
 import { LogoWordmark, NeonBackdrop } from "@/components/brand";
 import { toast } from "sonner";
 
-export default function OtpPage() {
+function OtpForm() {
   const { t } = useI18n();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -62,5 +63,17 @@ export default function OtpPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function OtpPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-bg">
+        <div className="animate-spin h-8 w-8 rounded-full border-2 border-cyan border-t-transparent" />
+      </div>
+    }>
+      <OtpForm />
+    </Suspense>
   );
 }
