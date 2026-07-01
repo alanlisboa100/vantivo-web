@@ -9,6 +9,7 @@ import { Card, Button, Spinner, Badge } from "@/components/ui";
 import { motion, AnimatePresence } from "framer-motion";
 import type { AIMessage } from "@/lib/types";
 import { Send, Bot, User, ImagePlus, X, Sparkles } from "lucide-react";
+import { saveProject } from "@/lib/save-project";
 import { toast } from "sonner";
 
 export default function AssistantPage() {
@@ -77,6 +78,12 @@ export default function AssistantPage() {
           if (imgResult.imageUrl) {
             finalImageUrl = imgResult.imageUrl;
             finalContent = imgResult.text || `Imagem gerada: "${userMsg.content}"`;
+            saveProject({
+              type: "image",
+              title: userMsg.content.slice(0, 60),
+              description: "Imagem gerada no chat",
+              imageUrl: finalImageUrl,
+            });
           }
         } catch {
           finalContent = result.text || "Não consegui gerar a imagem. Tente de novo.";

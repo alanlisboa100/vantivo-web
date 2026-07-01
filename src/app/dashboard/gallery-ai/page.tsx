@@ -8,6 +8,7 @@ import { NeonBackdrop, PremiumBadge } from "@/components/brand";
 import { Card, Button, Spinner, Badge } from "@/components/ui";
 import { motion } from "framer-motion";
 import { ImagePlus, Sparkles, Scan, Languages } from "lucide-react";
+import { saveProject } from "@/lib/save-project";
 import { toast } from "sonner";
 
 export default function GalleryAiPage() {
@@ -36,8 +37,14 @@ export default function GalleryAiPage() {
           prompt: mode === "translate" ? "traduzir texto da imagem para português mantendo o design original" : "analise esta imagem em detalhes",
         },
       });
-      setAnalysis(result.text || "Imagem processada!");
-      if (result.imageUrl) setAnalysis(prev => prev + `\n\nURL: ${result.imageUrl}`);
+      const text = result.text || "Imagem processada!";
+      setAnalysis(text);
+      saveProject({
+        type: "analysis",
+        title: mode === "analyze" ? "Análise de imagem" : "Imagem traduzida",
+        description: text.slice(0, 80),
+        imageUrl: result.imageUrl || uploadedImage || undefined,
+      });
     } catch (err: any) {
       toast.error(err?.message || "Erro ao processar");
     }

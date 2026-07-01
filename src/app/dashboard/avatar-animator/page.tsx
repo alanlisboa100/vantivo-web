@@ -8,6 +8,7 @@ import { NeonBackdrop, PremiumBadge } from "@/components/brand";
 import { Card, Button, Spinner, Badge } from "@/components/ui";
 import { motion } from "framer-motion";
 import { ImagePlus, Sparkles, Video, X } from "lucide-react";
+import { saveProject } from "@/lib/save-project";
 import { toast } from "sonner";
 
 export default function AvatarAnimatorPage() {
@@ -35,7 +36,15 @@ export default function AvatarAnimatorPage() {
           prompt: "animate this photo with natural movement",
         },
       });
-      if (result.imageUrl) setResult(result.imageUrl);
+      if (result.imageUrl) {
+        setResult(result.imageUrl);
+        saveProject({
+          type: "avatar",
+          title: "Avatar Animado",
+          description: "Animação de avatar com IA",
+          imageUrl: result.imageUrl,
+        });
+      }
     } catch (err: any) {
       toast.error(err?.message || "Erro ao animar");
     }

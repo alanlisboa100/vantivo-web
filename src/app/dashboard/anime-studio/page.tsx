@@ -8,6 +8,7 @@ import { NeonBackdrop, PremiumBadge } from "@/components/brand";
 import { Card, Button, Spinner, Badge } from "@/components/ui";
 import { motion } from "framer-motion";
 import { ImagePlus, Sparkles, X } from "lucide-react";
+import { saveProject } from "@/lib/save-project";
 import { toast } from "sonner";
 
 const ANIME_STYLES = [
@@ -44,7 +45,15 @@ export default function AnimeStudioPage() {
           prompt: `transform this photo into ${selectedStyle} anime style`,
         },
       });
-      if (result.imageUrl) setResult(result.imageUrl);
+      if (result.imageUrl) {
+        setResult(result.imageUrl);
+        saveProject({
+          type: "anime",
+          title: `Anime ${selectedStyle}`,
+          description: `Transformado em estilo ${selectedStyle}`,
+          imageUrl: result.imageUrl,
+        });
+      }
     } catch (err: any) {
       toast.error(err?.message || "Erro ao gerar");
     }

@@ -8,6 +8,7 @@ import { NeonBackdrop, PremiumBadge } from "@/components/brand";
 import { Card, Button, Input, Spinner, Badge } from "@/components/ui";
 import { motion } from "framer-motion";
 import { ImagePlus, Sparkles, X } from "lucide-react";
+import { saveProject } from "@/lib/save-project";
 import { toast } from "sonner";
 
 export default function StudioCoversPage() {
@@ -29,7 +30,15 @@ export default function StudioCoversPage() {
           engine: "cover",
         },
       });
-      if (result.imageUrl) setImageUrl(result.imageUrl);
+      if (result.imageUrl) {
+        setImageUrl(result.imageUrl);
+        saveProject({
+          type: "image",
+          title: prompt ? `Capa: ${prompt.slice(0, 60)}` : "Capa criada",
+          description: "Capa ou anúncio gerado com IA",
+          imageUrl: result.imageUrl,
+        });
+      }
       if (result.text) toast.success(result.text);
     } catch (err: any) {
       toast.error(err?.message || "Erro ao gerar");

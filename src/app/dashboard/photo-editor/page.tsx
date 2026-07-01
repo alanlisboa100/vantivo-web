@@ -8,6 +8,7 @@ import { NeonBackdrop, PremiumBadge } from "@/components/brand";
 import { Card, Button, Input, Spinner, Badge } from "@/components/ui";
 import { motion } from "framer-motion";
 import { ImagePlus, Sparkles, X } from "lucide-react";
+import { saveProject } from "@/lib/save-project";
 import { toast } from "sonner";
 
 export default function PhotoEditorPage() {
@@ -37,7 +38,15 @@ export default function PhotoEditorPage() {
           engine: mode,
         },
       });
-      if (result.imageUrl) setResult(result.imageUrl);
+      if (result.imageUrl) {
+        setResult(result.imageUrl);
+        saveProject({
+          type: "photo",
+          title: prompt ? `Edição: ${prompt.slice(0, 60)}` : "Foto editada",
+          description: `Edição aplicada: ${mode}`,
+          imageUrl: result.imageUrl,
+        });
+      }
     } catch (err: any) {
       toast.error(err?.message || "Erro ao processar");
     }
