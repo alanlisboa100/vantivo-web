@@ -40,6 +40,7 @@ function mapUser(supabaseUser: any, profile: any): User {
     status: profile?.status || "active",
     createdAt: new Date(profile?.created_at || Date.now()),
     photoUrl: profile?.photo_url || "",
+    coverUrl: profile?.cover_url || "",
     displayName: profile?.display_name || profile?.full_name || "",
   };
 }
