@@ -26,7 +26,7 @@ const TOOL_ROUTES: Record<string, string> = {
   headshot: "/dashboard/photo-editor",
   camera: "/dashboard/photo-editor",
   product: "/dashboard/photo-editor",
-  cover: "/dashboard/studio/covers",
+  cover: "/dashboard/covers",
   anime: "/dashboard/anime-studio",
   avatar: "/dashboard/avatar-animator",
   video: "/dashboard/video-maker",
