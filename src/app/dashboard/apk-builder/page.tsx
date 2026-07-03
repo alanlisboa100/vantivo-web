@@ -54,7 +54,7 @@ export default function ApkBuilderPage() {
         },
       });
 
-      const apkUrl = res.imageUrl || res.url;
+      const apkUrl = res.imageUrl;
       if (apkUrl) {
         setResult(apkUrl);
         saveProject({
