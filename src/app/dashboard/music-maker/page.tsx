@@ -103,7 +103,7 @@ export default function MusicMakerPage() {
       />
 
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-        <Card glow="blue" hover={false} className="p-5 mt-6">
+        <Card glow="cyan" hover={false} className="p-5 mt-6">
           <div className="flex items-center gap-3 mb-4">
             <button onClick={() => router.push("/dashboard/studio")} className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors">
               <ChevronLeft size={18} />
