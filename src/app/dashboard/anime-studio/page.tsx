@@ -41,7 +41,7 @@ export default function AnimeStudioPage() {
       });
       if (result.imageUrl) {
         setResult(result.imageUrl);
-        saveProject({ type: "anime", title: `Anime ${selectedStyle}`, description: `Estilo ${selectedStyle}`, imageUrl: result.imageUrl });
+        saveProject({ type: "anime", title: `Anime ${selectedStyle}`, description: `Estilo ${selectedStyle}`, imageUrl: result.imageUrl, route: "/dashboard/anime-studio", status: "ready" });
       }
     } catch (err: any) {
       toast.error(err?.message || "Erro ao gerar");

@@ -43,6 +43,8 @@ export default function GalleryAiPage() {
         title: mode === "analyze" ? "Análise de imagem" : "Imagem traduzida",
         description: text.slice(0, 80),
         imageUrl: result.imageUrl || uploadedImage || undefined,
+        route: "/dashboard/gallery-ai",
+        status: "ready",
       });
     } catch (err: any) {
       toast.error(err?.message || "Erro ao processar");

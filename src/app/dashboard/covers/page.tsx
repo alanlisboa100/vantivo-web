@@ -28,7 +28,7 @@ export default function StudioCoversPage() {
       });
       if (result.imageUrl) {
         setImageUrl(result.imageUrl);
-        saveProject({ type: "image", title: prompt ? `Capa: ${prompt.slice(0, 60)}` : "Capa criada", description: "Capa ou anúncio gerado com IA", imageUrl: result.imageUrl });
+        saveProject({ type: "image", title: prompt ? `Capa: ${prompt.slice(0, 60)}` : "Capa criada", description: "Capa ou anúncio gerado com IA", imageUrl: result.imageUrl, route: "/dashboard/covers", status: "ready" });
       }
       if (result.text) toast.success(result.text);
     } catch (err: any) {

@@ -83,6 +83,8 @@ export default function AssistantPage() {
               title: userMsg.content.slice(0, 60),
               description: "Imagem gerada no chat",
               imageUrl: finalImageUrl,
+              route: "/dashboard/assistant",
+              status: "ready",
             });
           }
         } catch {

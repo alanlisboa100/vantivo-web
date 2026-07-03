@@ -25,6 +25,7 @@ interface ToolConfig {
   placeholder?: string;
   examples: { url: string; label: string }[];
   type: "image" | "video" | "audio" | "model";
+  extraInput?: Record<string, unknown>;
 }
 
 export function ToolPage({ config }: { config: ToolConfig }) {
@@ -54,6 +55,7 @@ export function ToolPage({ config }: { config: ToolConfig }) {
   const handleGenerate = async () => {
     const inputPayload: Record<string, unknown> = {
       prompt: inputValue || config.placeholder || "",
+      ...(config.extraInput || {}),
     };
     if (images.length > 0) {
       inputPayload.images = config.acceptsMultipleImages ? images : [images[0]];
@@ -75,6 +77,9 @@ export function ToolPage({ config }: { config: ToolConfig }) {
         title: inputValue ? inputValue.slice(0, 60) : config.title,
         description: `Criado com ${config.title}`,
         imageUrl: mediaUrl,
+        route: `/dashboard/${config.action.replace(".", "-")}`,
+        status: "ready",
+        payload: { prompt: inputValue, action: config.action },
       });
 
       if (result.text) toast.success(result.text);

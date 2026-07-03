@@ -41,6 +41,8 @@ export default function AvatarAnimatorPage() {
           title: "Avatar Animado",
           description: "Animação de avatar com IA",
           imageUrl: result.imageUrl,
+          route: "/dashboard/avatar-animator",
+          status: "ready",
         });
       }
     } catch (err: any) {

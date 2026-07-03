@@ -5,6 +5,9 @@ export interface SaveProjectInput {
   title: string;
   description?: string;
   imageUrl?: string;
+  route?: string;
+  status?: string;
+  payload?: Record<string, unknown>;
 }
 
 export function saveProjectToLocal(input: SaveProjectInput) {
@@ -34,12 +37,19 @@ export async function saveProjectToSupabase(input: SaveProjectInput, userId: str
   if (!userId) return;
   try {
     const supabase = createClient();
+    const payload = {
+      ...(input.payload || {}),
+      ...(input.imageUrl ? { imageUrl: input.imageUrl } : {}),
+    };
     await supabase.from("vantivo_projects").insert({
+      id: `web-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       user_id: userId,
       title: input.title.slice(0, 100),
       description: input.description?.slice(0, 200) || "",
-      image_url: input.imageUrl || "",
       type: input.type || "image",
+      status: input.status || "ready",
+      route: input.route || "/dashboard/studio",
+      payload,
       created_at: new Date().toISOString(),
     });
   } catch {

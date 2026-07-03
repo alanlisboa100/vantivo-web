@@ -44,7 +44,7 @@ export default function PhotoEditorPage() {
       });
       if (result.imageUrl) {
         setResult(result.imageUrl);
-        saveProject({ type: "photo", title: prompt ? `Edição: ${prompt.slice(0, 60)}` : "Foto editada", description: `Edição aplicada: ${mode}`, imageUrl: result.imageUrl });
+        saveProject({ type: "photo", title: prompt ? `Edição: ${prompt.slice(0, 60)}` : "Foto editada", description: `Edição aplicada: ${mode}`, imageUrl: result.imageUrl, route: "/dashboard/photo-editor", status: "ready" });
       }
     } catch (err: any) {
       toast.error(err?.message || "Erro ao processar");
