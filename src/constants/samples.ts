@@ -45,6 +45,7 @@ export const TOOL_IMAGES = {
   premium: "https://static.wavespeed.ai/media/images/1782298155833776655_4HQ0ajsC.webp",
   gallery: "https://static.wavespeed.ai/media/images/1782298162338517347_OnxHR09i.webp",
   redeem: "https://static.wavespeed.ai/media/images/1782298168440778577_XY6gqzIS.webp",
+  apkbuilder: "https://static.wavespeed.ai/media/images/1782298180639774572_hxX6fpyH.webp",
 } as const;
 
 // ───── VIDEOS (test-videos.co.uk + Google cloud-samples) ─────

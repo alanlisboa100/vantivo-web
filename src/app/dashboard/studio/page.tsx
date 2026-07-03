@@ -5,11 +5,12 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   Sparkles, Image as ImageIcon, MessageSquare, Camera, Wand2, Box,
-  ChevronRight, Lock, Star, Zap, Search, Filter, Crown,
+  ChevronRight, Lock, Star, Zap, Search, Filter, Crown, Smartphone,
 } from "lucide-react";
 import { useAuth } from "@/lib/contexts/AuthContext";
 import { useI18n } from "@/lib/contexts/I18nContext";
 import { STUDIO_TOOLS } from "@/constants/theme";
+import { SHOWCASE_VIDEOS, EPIC_PHOTOS } from "@/constants/samples";
 import { LogoMark, PremiumBadge, SectionHeader, IconTile } from "@/components/brand";
 import {
   Button, Card, Input, Chip, Tabs, Section, EmptyState, AuroraBg, NoiseOverlay,
@@ -30,11 +31,12 @@ const TOOL_ROUTES: Record<string, string> = {
   avatar: "/dashboard/avatar-animator",
   video: "/dashboard/video-maker",
   faceswap: "/dashboard/face-swap",
-  upscale: "/dashboard/gallery-ai",
+  upscale: "/dashboard/upscale",
   bgremove: "/dashboard/bg-remove",
   avatarfalante: "/dashboard/talking-avatar",
-  music: "/dashboard/focus-mode",
-  threed: "/dashboard/studio",
+  music: "/dashboard/music-maker",
+  threed: "/dashboard/3d-model",
+  apkbuilder: "/dashboard/apk-builder",
   redeem: "/dashboard/redeem",
 };
 
@@ -50,8 +52,8 @@ const TOOL_CATEGORY: Record<string, string> = {
   assistant: "criacao", enhance: "edicao", body: "edicao", tryon: "edicao",
   headshot: "edicao", camera: "edicao", product: "edicao", cover: "criacao",
   anime: "criacao", avatar: "video", video: "video", faceswap: "edicao",
-  upscale: "premium", bgremove: "edicao", avatarfalante: "video", music: "premium",
-  threed: "premium", redeem: "premium",
+  upscale: "edicao", bgremove: "edicao", avatarfalante: "video", music: "criacao",
+  threed: "criacao", apkbuilder: "premium", redeem: "premium",
 };
 
 const ICON_MAP: Record<string, any> = {
@@ -59,7 +61,7 @@ const ICON_MAP: Record<string, any> = {
   headshot: Camera, camera: ImageIcon, product: Box, cover: ImageIcon,
   anime: Sparkles, avatar: Wand2, video: ImageIcon, faceswap: Wand2,
   upscale: ImageIcon, bgremove: ImageIcon, avatarfalante: MessageSquare,
-  music: Sparkles, threed: Box, redeem: Star,
+  music: Sparkles, threed: Box, apkbuilder: Smartphone, redeem: Star,
 };
 
 export default function StudioPage() {
@@ -70,7 +72,7 @@ export default function StudioPage() {
   const [activeCategory, setActiveCategory] = useState("all");
 
   const isAvailable = (cost: string) => !cost.includes("Breve");
-  const isPremium = (cost: string) => cost.includes("35") || cost.includes("Em breve");
+  const isPremium = (cost: string) => cost.includes("35") || cost.includes("15") || cost.includes("10");
 
   const filteredTools = STUDIO_TOOLS.filter((t) => {
     const matchesQuery = query === "" || t.label.toLowerCase().includes(query.toLowerCase());
@@ -130,6 +132,62 @@ export default function StudioPage() {
           tabs={CATEGORIES.map((c) => ({ id: c.id, label: c.label }))}
         />
       </div>
+
+      {/* ─── Showcase Carousel ─── */}
+      {activeCategory === "all" && query === "" && (
+        <section className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 mb-8">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-dim mb-3">
+            Criações da comunidade
+          </p>
+          <div className="flex gap-3 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
+            {SHOWCASE_VIDEOS.slice(0, 4).map((video, i) => (
+              <motion.div
+                key={`v-${i}`}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: i * 0.08 }}
+                className="flex-shrink-0 w-48 rounded-2xl overflow-hidden border border-white/5 hover:border-cyan/20 hover:shadow-[0_0_24px_rgba(34,211,238,0.1)] transition-all cursor-pointer group"
+              >
+                <div className="relative">
+                  <video
+                    src={video.url}
+                    poster={video.poster}
+                    muted
+                    loop
+                    playsInline
+                    className="w-full h-28 object-cover group-hover:scale-105 transition-transform duration-500"
+                    onMouseEnter={(e) => e.currentTarget.play()}
+                    onMouseLeave={(e) => { e.currentTarget.pause(); e.currentTarget.currentTime = 0; }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute bottom-2 left-2">
+                    <p className="text-[10px] font-bold text-text">{video.label}</p>
+                    <p className="text-[9px] text-dim">{video.desc}</p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+            {EPIC_PHOTOS.slice(0, 4).map((img, i) => (
+              <motion.div
+                key={`img-${i}`}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: (i + 4) * 0.08 }}
+                className="flex-shrink-0 w-48 rounded-2xl overflow-hidden border border-white/5 hover:border-purple/20 hover:shadow-[0_0_24px_rgba(168,85,247,0.1)] transition-all cursor-pointer group"
+              >
+                <div className="relative">
+                  <img src={img.url} alt={img.title} className="w-full h-28 object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute bottom-2 left-2">
+                    <p className="text-[10px] font-bold text-text">{img.title}</p>
+                    <p className="text-[9px] text-dim">{img.model}</p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* ─── Tools Grid ─── */}
       <section className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pb-32">
