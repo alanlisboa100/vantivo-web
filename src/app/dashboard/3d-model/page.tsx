@@ -14,7 +14,7 @@ export default function ThreeDModelPage() {
         title="Modelo 3D"
         subtitle="Transforme imagens ou texto em modelos 3D"
         description="Envie uma foto ou descreva o objeto. A IA gera um modelo 3D completo em formato GLB, pronto para usar em jogos, AR ou impressão 3D."
-        cost={5}
+        cost={12}
         icon={Box}
         color="green"
         features={["Formato GLB", "Texturizado", "Pronto para AR/VR", "Alta qualidade"]}
@@ -27,7 +27,7 @@ export default function ThreeDModelPage() {
             badge: "HUNYUAN 3D",
             badgeColor: "green",
             description: "Transforme uma imagem em modelo 3D ou descreva o que quer criar.",
-            price: "5 pts",
+            price: "12 pts",
             acceptsImage: true,
             placeholder: "Ex: Um vaso decorativo moderno com padrões geométricos...",
             type: "image",

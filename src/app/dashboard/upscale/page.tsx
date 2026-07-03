@@ -14,7 +14,7 @@ export default function UpscalePage() {
         title="Upscale"
         subtitle="Aumente a resolução sem perder qualidade"
         description="Transforme imagens de baixa resolução em alta definição. A IA reconstrói detalhes, texturas e nitidez de forma inteligente."
-        cost={1}
+        cost={2}
         icon={ZoomIn}
         color="green"
         features={["Até 4x resolução", "Preserva detalhes", "Remove ruído", "Resultado instantâneo"]}
@@ -27,7 +27,7 @@ export default function UpscalePage() {
             badge: "UPSCALER",
             badgeColor: "green",
             description: "Aumente a resolução da sua imagem mantendo a qualidade.",
-            price: "1 pt",
+            price: "2 pts",
             acceptsImage: true,
             placeholder: "Selecione uma imagem para upscaling...",
             type: "image",

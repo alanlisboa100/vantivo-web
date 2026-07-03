@@ -72,7 +72,7 @@ export default function StudioPage() {
   const [activeCategory, setActiveCategory] = useState("all");
 
   const isAvailable = (cost: string) => !cost.includes("Breve");
-  const isPremium = (cost: string) => cost.includes("35") || cost.includes("15") || cost.includes("10");
+  const isPremium = (cost: string) => cost.includes("50") || cost.includes("15") || cost.includes("12");
 
   const filteredTools = STUDIO_TOOLS.filter((t) => {
     const matchesQuery = query === "" || t.label.toLowerCase().includes(query.toLowerCase());

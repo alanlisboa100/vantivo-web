@@ -56,7 +56,7 @@ export default function AnimeStudioPage() {
         title="Transforme fotos em anime"
         subtitle="4 estilos icônicos · Ghibli, Shoujo, Shonen, Cyberpunk"
         description="Upload da sua foto, escolhe o estilo, clica em gerar. Em segundos você tem uma versão anime de você mesmo com qualidade profissional."
-        cost={3}
+        cost={12}
         icon={Palette}
         color="pink"
         features={["4 estilos icônicos", "Mantém traços do rosto", "4K · pronto pra postar"]}

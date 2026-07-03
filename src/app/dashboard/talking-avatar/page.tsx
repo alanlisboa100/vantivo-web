@@ -14,7 +14,7 @@ export default function TalkingAvatarPage() {
         title="Avatar Falante"
         subtitle="Foto que fala com lip-sync perfeito"
         description="Transforme qualquer foto num vídeo com áudio sincronizado. Digite o texto, escolha a voz e pronto. Ideal pra vídeos explicativos, anúncios e TikToks."
-        cost={10}
+        cost={8}
         icon={MessageSquare}
         color="amber"
         features={["Lip-sync automático", "Vozes ElevenLabs", "30+ idiomas", "1080p · até 60s"]}
@@ -27,7 +27,7 @@ export default function TalkingAvatarPage() {
             badge: "INFINITETALK",
             badgeColor: "amber",
             description: "Transforme qualquer foto em um vídeo com áudio sincronizado. A foto ganha vida e fala o texto que você digitar.",
-            price: "10 pts",
+            price: "8 pts",
             acceptsImage: true,
             placeholder: "Texto que o avatar deve falar...",
             type: "video",

@@ -14,7 +14,7 @@ export default function FaceSwapPage() {
         title="Troca de Rosto"
         subtitle="Troque rostos entre fotos com precisão realista"
         description="Envie a foto original e a foto com o rosto de referência. A IA faz a troca mantendo iluminação, ângulo e expressão naturais."
-        cost={3}
+        cost={2}
         icon={UserCircle2}
         color="purple"
         features={["Preserva iluminação", "Mantém expressão", "Foto ou vídeo", "Múltiplos rostos"]}
@@ -27,7 +27,7 @@ export default function FaceSwapPage() {
             badge: "TROCA DE ROSTO",
             badgeColor: "purple",
             description: "Troque rostos entre fotos com precisão realista. Envie a foto original e a foto com o rosto de referência.",
-            price: "3 pts",
+            price: "2 pts",
             acceptsImage: true,
             acceptsMultipleImages: true,
             minImages: 2,

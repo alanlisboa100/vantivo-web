@@ -14,7 +14,7 @@ export default function MusicMakerPage() {
         title="Música IA"
         subtitle="Crie músicas completas com inteligência artificial"
         description="Descreva o estilo, mood e instrumentos. A IA gera uma música profissional em segundos. Ideal para vídeos, podcasts e projetos criativos."
-        cost={2}
+        cost={5}
         icon={Music}
         color="blue"
         features={["Até 60 segundos", "Diversos estilos", "Vocal ou instrumental", "Download MP3"]}
@@ -27,7 +27,7 @@ export default function MusicMakerPage() {
             badge: "MINIMAX",
             badgeColor: "blue",
             description: "Crie músicas completas descrevendo estilo, mood e instrumentos.",
-            price: "2 pts",
+            price: "5 pts",
             acceptsImage: false,
             placeholder: "Ex: Uma música pop alegre com guitarra e bateria, estilo verão...",
             type: "audio",

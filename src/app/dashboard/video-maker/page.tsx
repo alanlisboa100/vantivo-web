@@ -14,7 +14,7 @@ export default function VideoMakerPage() {
         title="Vídeo IA"
         subtitle="Texto ou imagem → vídeo cinematográfico em segundos"
         description="Os melhores modelos de vídeo do mundo numa só ferramenta. Seedance 2.0, WAN 2.7, Veo 3.1, Kling 3.0 e Sora 2. Faça upload de uma foto ou descreva a cena."
-        cost={5}
+        cost={15}
         icon={Video}
         color="cyan"
         features={["1080p · até 15s", "Movimento de câmera", "Áudio sincronizado", "I2V + T2V"]}
@@ -27,7 +27,7 @@ export default function VideoMakerPage() {
             badge: "SEEDANCE 2.0",
             badgeColor: "purple",
             description: "Transforme texto ou imagens em vídeos cinematográficos com Seedance 2.0 e Wan 2.7.",
-            price: "5 pts",
+            price: "15 pts",
             acceptsImage: true,
             placeholder: "Descreva a cena do vídeo...",
             type: "video",

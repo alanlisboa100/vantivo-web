@@ -52,7 +52,7 @@ export default function StudioCoversPage() {
         title="Capas Profissionais"
         subtitle="YouTube, Instagram, TikTok — pronto pra postar"
         description="Crie capas e anúncios profissionais com a IA. Layouts otimizados pra cada plataforma, com texto, cores e estilo que vendem."
-        cost={4}
+        cost={12}
         icon={ImageIcon}
         color="purple"
         features={["YouTube · Instagram · TikTok", "Texto automático", "Cores que vendem", "4K · pronto pra postar"]}

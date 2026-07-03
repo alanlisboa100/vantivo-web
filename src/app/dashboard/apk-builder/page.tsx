@@ -79,7 +79,7 @@ export default function ApkBuilderPage() {
         title="APK Builder"
         subtitle="Transforme qualquer site em app Android"
         description="Cole a URL do seu site ou Progressive Web App e receba um APK pronto para instalar e publicar na Play Store."
-        cost={15}
+        cost={5}
         icon={Smartphone}
         color="amber"
         features={["APK assinado", "Ícone personalizado", "Splash screen", "Pronto para Play Store"]}
@@ -148,7 +148,7 @@ export default function ApkBuilderPage() {
           </div>
 
           <Button onClick={handleBuild} loading={mutation.isPending} glow className="w-full" leftIcon={<Smartphone size={16} />}>
-            Gerar APK · 15 pts
+            Gerar APK · 5 pts
           </Button>
         </Card>
       </motion.div>

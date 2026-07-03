@@ -56,7 +56,7 @@ export default function AvatarAnimatorPage() {
         title="Avatar Animado"
         subtitle="Dê vida às suas fotos com animação facial realista"
         description="Transforme qualquer foto num avatar com movimentos naturais de cabeça, olhos e boca. Perfeito pra vídeos de Instagram, TikTok e YouTube."
-        cost={35}
+        cost={50}
         icon={UserCircle2}
         color="green"
         features={["Movimento facial natural", "Eye tracking", "Lip-sync opcional", "1080p · até 10s"]}
