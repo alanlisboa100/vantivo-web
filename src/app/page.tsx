@@ -1,383 +1,794 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { LogoWordmark, NeonBackdrop, PremiumBadge } from "@/components/brand";
-import { Button, Card } from "@/components/ui";
 import { useState } from "react";
-import { SAMPLES } from "@/constants/samples";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  Sparkles, Image, Camera, Palette, Brain, Clock,
-  ChevronDown, Check, Star, Zap, ArrowRight, TrendingUp,
-  Shield, Smartphone, Globe, MessageSquare
+  Sparkles, Image as ImageIcon, Camera, Palette, Brain, Clock,
+  Check, Star, Zap, ArrowRight, MessageSquare,
+  Video, UserCircle2, Music, Box, Maximize2, Play, Quote,
+  Globe, Wand2, Layers, Heart, Flame, Sparkle, Cpu,
+  Mic, TrendingUp, Shield,
 } from "lucide-react";
 
-const FEATURES = [
-  { icon: Sparkles, title: "Geração de Imagens", desc: "Crie artes profissionais com IA em segundos. Descreva o que quer ver e pronto." },
-  { icon: Camera, title: "Editor de Fotos", desc: "Melhore, edite corpo, troque roupa, mude ângulos — tudo com comandos simples." },
-  { icon: Image, title: "Capas & Anúncios", desc: "Design pronto para YouTube, Instagram e TikTok. Sem precisar de Photoshop." },
-  { icon: Palette, title: "Anime Studio", desc: "Transforme selfies em arte anime com estilos como Ghibli, Shoujo e Cyberpunk." },
-  { icon: Brain, title: "Assistente IA", desc: "Converse, peça ideias de legenda, revise textos e crie conteúdo." },
-  { icon: Clock, title: "Modo Foco", desc: "Timer pomodoro inteligente com metas e streaks." },
-  { icon: Sparkles, title: "Vídeo IA", desc: "Gere vídeos a partir de texto ou imagens com Seedance 2.0 e Wan 2.7." },
-  { icon: Image, title: "Face Swap", desc: "Troque rostos em fotos e vídeos com precisão realista." },
-  { icon: Camera, title: "Avatar Falante", desc: "Transforme fotos em vídeos com áudio sincronizado." },
-  { icon: Palette, title: "Música IA", desc: "Componha músicas originais descrevendo o estilo e o mood." },
-  { icon: Sparkles, title: "Modelos 3D", desc: "Crie assets 3D de alta qualidade a partir de texto ou imagem." },
-  { icon: Image, title: "Upscale", desc: "Aumente a resolução de imagens sem perder qualidade." },
-];
+import {
+  Button, Card, Tabs, StatCard, Section,
+  GradientText, AuroraBg, NoiseOverlay,
+} from "@/components/ui/barrel";
 
-const BENEFITS = [
-  { icon: Zap, title: "Rápido", desc: "Imagens em segundos" },
-  { icon: Smartphone, title: "Multi-plataforma", desc: "Web + App Android" },
-  { icon: Shield, title: "Seguro", desc: "Seus dados protegidos" },
-  { icon: Globe, title: "i18n", desc: "Português e Inglês" },
-];
+import { LogoWordmark, NeonBackdrop, PremiumBadge, SectionHeader, IconTile } from "@/components/brand";
+import { EPIC_VIDEOS, EPIC_PHOTOS } from "@/constants/samples";
+import { NAV, TESTIMONIALS, SOCIAL_PROOF } from "@/constants/nav";
+import {
+  IMAGE_MODELS,
+  VIDEO_MODELS,
+  VIDEO_COMPARISON,
+  IMAGE_COMPARISON,
+} from "@/constants/models";
+
+import { ModelCard } from "@/components/landing/ModelCard";
+import { ModelComparison } from "@/components/landing/ModelComparison";
+import { EpicVideoGallery, EpicVideoCard } from "@/components/landing/EpicVideoGallery";
+import { EpicPhotoGallery } from "@/components/landing/EpicPhotoGallery";
+import { ModelMarqueeStack, ModelStatBar } from "@/components/landing/ModelMarquee";
+import { LiveFeed, StatsTicker, PulsingCTA } from "@/components/landing/LiveFeed";
+import { UseCasesGrid } from "@/components/landing/UseCases";
+import { ModelShowcase } from "@/components/landing/ModelShowcase";
+import { MouseSpotlight } from "@/components/landing/MouseSpotlight";
+
+const ICON_MAP_NAV: Record<string, any> = {
+  Sparkles, Image: ImageIcon, Camera, Palette, Brain, Clock, Video,
+  UserCircle2, MessageSquare, Music, Box, Maximize2,
+};
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0 },
+};
+const stagger = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
+};
 
 const FAQ = [
-  { q: "Preciso baixar algum aplicativo?", a: "Não! A versão web funciona direto no navegador. Também temos app nativo para Android." },
-  { q: "Como funcionam os pontos?", a: "Cada ação (gerar imagem, editar foto, conversar) gasta pontos. Você ganha pontos ao assinar um plano ou comprar pacotes extras." },
-  { q: "Posso testar antes de pagar?", a: "Sim! Crie uma conta gratuita e explore o Studio. Alguns recursos são liberados para teste." },
-  { q: "Minhas criações ficam salvas?", a: "Sim, tudo fica salvo automaticamente no seu histórico e pode ser acessado de qualquer dispositivo." },
-  { q: "O LISBOA funciona em inglês também?", a: "Sim! O suporte é completo em português e inglês. Você alterna no perfil." },
+  {
+    q: "Preciso ser designer pra usar o LISBOA?",
+    a: "Não. O LISBOA foi feito pra ser usado por qualquer pessoa — basta descrever o que você quer em poucas palavras. A IA cuida do resto. Designers também usam pra acelerar o trabalho.",
+  },
+  {
+    q: "Como funcionam os pontos?",
+    a: "Cada ação consome pontos: gerar imagem (1-4 pts), editar foto (1-3 pts), gerar vídeo (20-50 pts), avatar animado (25-35 pts). Você compra pontos avulsos ou assina um plano mensal com pontos inclusos.",
+  },
+  {
+    q: "Posso testar antes de pagar?",
+    a: "Sim! Crie uma conta gratuita e ganhe pontos pra explorar o Studio. Sem cartão de crédito, sem pegadinha. Quando curtir, aí você escolhe um plano.",
+  },
+  {
+    q: "Quais modelos de IA vocês têm?",
+    a: "Temos 8+ modelos de imagem (GPT Image 2, Nano Banana 2, Flux 2 Klein, Imagen 4 Ultra, Seedream 4, Ghibli AI, Qwen Image, Reve v1) e 8+ modelos de vídeo (Seedance 2.0, WAN 2.7, Veo 3.1, Kling 3.0, Sora 2, Pika 2.2, Hailuo 2, ElevenLabs LipSync). Toda semana adicionamos modelos novos.",
+  },
+  {
+    q: "Minhas criações ficam salvas?",
+    a: "Sim, tudo fica salvo automaticamente no seu histórico e pode ser acessado de qualquer dispositivo. Você pode baixar em alta resolução ou compartilhar direto.",
+  },
+  {
+    q: "Funciona em celular?",
+    a: "Sim! A versão web é totalmente responsiva. Também temos app nativo Android com a mesma experiência. Pra iOS, use o navegador Safari — funciona perfeitamente.",
+  },
+  {
+    q: "Posso usar comercialmente?",
+    a: "Sim. Tudo que você cria com o LISBOA é seu. Use em posts, anúncios, vídeos monetizados, produtos — sem royalties ou marcas d'água.",
+  },
+  {
+    q: "E se eu não gostar do resultado?",
+    a: "Você pode refinar quantas vezes quiser gastando apenas os pontos da nova geração. O assistente também ajuda a melhorar seu prompt pra resultados cada vez melhores.",
+  },
+];
+
+const PLANS = [
+  { name: "Start", id: "start", price: 14.9, pts: 120, highlight: false, tagline: "Pra começar a criar sem compromisso",
+    features: ["120 pontos por mês", "8+ modelos de imagem", "Editor de fotos básico", "Anime Studio (limitado)", "Suporte por email"] },
+  { name: "Pro", id: "pro", price: 34.9, pts: 320, highlight: true, tagline: "O mais escolhido pelos criadores",
+    features: ["320 pontos por mês", "Tudo do Start", "8+ modelos de vídeo", "Editor de fotos premium", "Anime Studio ilimitado", "Suporte prioritário"] },
+  { name: "Ultra", id: "ultra", price: 69.9, pts: 700, highlight: false, tagline: "Pra quem produz em escala",
+    features: ["700 pontos por mês", "Tudo do Pro", "Sora 2 + Veo 3.1 inclusos", "Avatar animado", "Avatar falante", "Suporte VIP 24/7"] },
+];
+
+const CATEGORIES = [
+  { id: "all", label: "Todas", icon: Layers },
+  { id: "criacao", label: "Criação", icon: Wand2 },
+  { id: "edicao", label: "Edição", icon: Camera },
+  { id: "video", label: "Vídeo", icon: Video },
+  { id: "avancado", label: "Avançado", icon: Sparkles },
+];
+
+const USE_CASES = [
+  {
+    id: "uc-youtube",
+    title: "Capas virais pra YouTube",
+    description: "Crie thumbnails que param o scroll com GPT Image 2 e texto perfeito.",
+    example: "Thumbnail YouTube: homem surpreso apontando pra texto 'IA MATOU O PHOTOSHOP' com fundo gradiente neon",
+    icon: ImageIcon,
+    model: IMAGE_MODELS[0],
+    accent: "cyan" as const,
+    metric: "+340%",
+    metricLabel: "CTR médio",
+  },
+  {
+    id: "uc-reels",
+    title: "Reels que viralizam",
+    description: "Vídeos cinematográficos com Seedance 2.0 pra Instagram, TikTok e Shorts.",
+    example: "Drone cinematográfico sobrevoando cidade cyberpunk à noite, luzes neon, chuva, 9:16",
+    icon: Video,
+    model: VIDEO_MODELS[0],
+    accent: "purple" as const,
+    metric: "1M+",
+    metricLabel: "Views possíveis",
+  },
+  {
+    id: "uc-anime",
+    title: "Avatar estilo Ghibli",
+    description: "Transforme selfies em retratos anime perfeitos pra perfil e merch.",
+    example: "Retrato estilo Ghibli de uma pessoa olhando pro horizonte, traços delicados, fundo pastel",
+    icon: Palette,
+    model: IMAGE_MODELS[7],
+    accent: "pink" as const,
+    metric: "100k+",
+    metricLabel: "Avatares criados",
+  },
+  {
+    id: "uc-anuncio",
+    title: "Anúncios que convertem",
+    description: "Copy + visual prontos pra Facebook Ads e Google em 30 segundos.",
+    example: "Anúncio de perfume em fundo escuro, partículas douradas, texto premium em português",
+    icon: TrendingUp,
+    model: IMAGE_MODELS[0],
+    accent: "amber" as const,
+    metric: "5x",
+    metricLabel: "ROAS médio",
+  },
+  {
+    id: "uc-product",
+    title: "Mockup de produto",
+    description: "Foto de produto profissional sem precisar de estúdio.",
+    example: "Frasco de perfume flutuando em fundo infinito cinza, iluminação de estúdio",
+    icon: Box,
+    model: IMAGE_MODELS[1],
+    accent: "green" as const,
+    metric: "90%",
+    metricLabel: "Menos custo",
+  },
+  {
+    id: "uc-avatar",
+    title: "Avatar falante",
+    description: "Foto virando vídeo com lip-sync perfeito em qualquer idioma.",
+    example: "Foto de rosto sincronizada com narração em português, lip-sync realista",
+    icon: Mic,
+    model: VIDEO_MODELS[7],
+    accent: "purple" as const,
+    metric: "47",
+    metricLabel: "Idiomas",
+  },
+  {
+    id: "uc-foto",
+    title: "Edição corporal IA",
+    description: "Mude corpo, roupa, pose e ângulo sem perder a identidade.",
+    example: "Modelo em vestido vermelho de noite, fundo parisiense, pose elegante",
+    icon: Camera,
+    model: IMAGE_MODELS[4],
+    accent: "blue" as const,
+    metric: "4K",
+    metricLabel: "Resolução",
+  },
+  {
+    id: "uc-conceito",
+    title: "Concept art épico",
+    description: "Visualize ideias pra livros, jogos e filmes em minutos.",
+    example: "Cavaleiro em armadura negra montando dragão vermelho, montanhas ao fundo, épico cinematográfico",
+    icon: Wand2,
+    model: IMAGE_MODELS[3],
+    accent: "purple" as const,
+    metric: "10x",
+    metricLabel: "Mais rápido",
+  },
 ];
 
 export default function LandingPage() {
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [activeCategory, setActiveCategory] = useState("all");
+  const [billing, setBilling] = useState<"monthly" | "yearly">("monthly");
+  const [modelFilter, setModelFilter] = useState<"all" | "image" | "video">("all");
+  const yearlyDiscount = 0.7;
+
+  const filteredFeatures = activeCategory === "all"
+    ? NAV.features
+    : NAV.features.filter((f) => f.category === activeCategory);
 
   return (
-    <div className="relative min-h-screen bg-bg overflow-hidden">
-      <NeonBackdrop />
+    <div className="relative min-h-screen bg-bg overflow-x-hidden">
+      <NeonBackdrop intensity="default" />
+      <NoiseOverlay opacity={0.02} />
 
-      {/* Nav */}
-      <nav className="relative z-20 flex items-center justify-between px-6 py-4 max-w-6xl mx-auto">
-        <LogoWordmark size={28} />
-        <div className="flex items-center gap-2">
-          <Link href="/login">
-            <Button variant="ghost" size="sm">Entrar</Button>
-          </Link>
-          <Link href="/signup">
-            <Button size="sm">Criar conta</Button>
-          </Link>
-        </div>
-      </nav>
-
-      {/* Hero */}
-      <section className="relative z-20 max-w-6xl mx-auto px-6 pt-20 pb-24 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-            <PremiumBadge className="mb-5">Estúdio Criativo com IA</PremiumBadge>
-          </motion.div>
-
-          <div className="relative mb-8 mx-auto max-w-3xl">
-            <div className="absolute -inset-4 gradient-cyan rounded-[40px] opacity-5 blur-3xl" />
-            <div className="relative grid grid-cols-3 gap-2 rounded-[24px] overflow-hidden border border-white/5 p-1">
-              {SAMPLES.hero.slice(0, 3).map((url, i) => (
-                <img key={i} src={url} alt="" className="w-full aspect-[4/3] object-cover rounded-[16px]" loading={i === 0 ? "eager" : "lazy"} />
-              ))}
-            </div>
-          </div>
-
-          <h1 className="text-5xl md:text-7xl font-black leading-[1.05] mb-5">
-            Transforme ideias em{" "}
-            <span className="bg-gradient-to-r from-purple via-cyan to-blue bg-clip-text text-transparent">
-              artes profissionais
-            </span>
-          </h1>
-          <p className="text-lg text-muted max-w-2xl mx-auto mb-8 leading-relaxed">
-            Crie, edite e transforme imagens com IA premium. Capas, anúncios, anime, avatar animado, editor de fotos e muito mais — tudo em um só lugar.
-          </p>
-
-          <motion.div
-            className="flex items-center justify-center gap-3 flex-wrap"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            <Link href="/signup">
-              <Button size="lg" className="text-base px-8 py-4 shadow-[0_0_30px_rgba(34,211,238,0.3)]">
-                Começar grátis
-                <ArrowRight size={18} />
-              </Button>
-            </Link>
-            <Link href="/login">
-              <Button variant="secondary" size="lg" className="text-base px-8 py-4">
-                Já tenho conta
-              </Button>
-            </Link>
-          </motion.div>
-
-          {/* Benefits row */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
-            className="flex items-center justify-center gap-6 mt-10 flex-wrap"
-          >
-            {BENEFITS.map((b) => (
-              <div key={b.title} className="flex items-center gap-2 text-sm text-muted">
-                <b.icon size={16} className="text-cyan" />
-                <span className="font-semibold text-text">{b.title}</span>
-                <span className="hidden sm:inline">· {b.desc}</span>
-              </div>
+      {/* ─── Navigation ─── */}
+      <motion.nav
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        className="sticky top-0 z-40 backdrop-blur-xl bg-bg/60 border-b border-white/5"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+          <LogoWordmark size={28} animated />
+          <div className="hidden md:flex items-center gap-1">
+            {[
+              { label: "Modelos", href: "#modelos" },
+              { label: "Vídeo", href: "#video" },
+              { label: "Galeria", href: "#galeria" },
+              { label: "Comparar", href: "#comparar" },
+              { label: "Planos", href: "#planos" },
+              { label: "FAQ", href: "#faq" },
+            ].map((item) => (
+              <a key={item.href} href={item.href} className="px-3 py-1.5 text-sm font-semibold text-muted hover:text-text rounded-lg hover:bg-white/5 transition-colors">
+                {item.label}
+              </a>
             ))}
-          </motion.div>
-        </motion.div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Link href="/login" className="hidden sm:block">
+              <Button variant="ghost" size="sm">Entrar</Button>
+            </Link>
+            <Link href="/signup">
+              <Button size="sm" rightIcon={<ArrowRight size={14} />}>Começar grátis</Button>
+            </Link>
+          </div>
+        </div>
+      </motion.nav>
 
-        <motion.div
-          className="mt-16 text-dim"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1, y: [0, 8, 0] }}
-          transition={{ delay: 0.8, y: { duration: 2, repeat: Infinity } }}
-        >
-          <ChevronDown size={24} className="mx-auto" />
-        </motion.div>
-      </section>
+      {/* ─── HERO ÉPICO ─── */}
+      <section className="relative pt-12 sm:pt-20 pb-16 sm:pb-24">
+        <AuroraBg intensity="md" className="opacity-40" />
+        <div className="absolute inset-0 bg-grid-fine pointer-events-none" />
 
-      {/* Showcase - Exemplos Reais */}
-      <section className="relative z-20 max-w-6xl mx-auto px-6 pb-24">
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: "-100px" }}
-          className="text-center mb-12"
-        >
-          <PremiumBadge className="mb-4">EXEMPLOS REAIS</PremiumBadge>
-          <h2 className="text-4xl font-black mb-3">Veja o que a IA pode fazer</h2>
-          <p className="text-muted max-w-xl mx-auto">
-            Imagens geradas por IA em segundos. Fotorrealismo, anime, design comercial e muito mais.
-          </p>
-        </motion.div>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6">
+          <motion.div initial="hidden" animate="visible" variants={stagger} className="text-center">
+            {/* Live feed acima do badge */}
+            <motion.div variants={fadeUp} className="flex justify-center mb-6">
+              <LiveFeed />
+            </motion.div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-          {SAMPLES.models.map((sample, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.05 }}
-              className="group relative rounded-2xl overflow-hidden border border-white/5 hover:border-cyan/20 transition-all duration-300"
-            >
-              <img
-                src={sample.url}
-                alt={sample.label}
-                className="w-full aspect-[4/3] object-cover group-hover:scale-105 transition-transform duration-500"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
-                <div>
-                  <p className="text-sm font-bold">{sample.label}</p>
-                  <p className="text-[11px] text-muted">{sample.desc}</p>
+            <motion.div variants={fadeUp}>
+              <PremiumBadge className="mb-6" icon={<Flame size={11} />}>
+                Estúdio Criativo com IA · 16+ modelos · Beta aberta
+              </PremiumBadge>
+            </motion.div>
+
+            <motion.h1 variants={fadeUp} className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-[0.95] mb-6">
+              Crie artes{" "}
+              <GradientText from="#22d3ee" via="#a855f7" to="#ec4899">
+                profissionais
+              </GradientText>
+              <br />
+              com IA em segundos.
+            </motion.h1>
+
+            <motion.p variants={fadeUp} className="text-base sm:text-lg text-muted max-w-2xl mx-auto mb-8 leading-relaxed">
+              8 modelos de imagem e 8 modelos de vídeo — incluindo GPT Image 2, Seedance 2.0, Sora 2 e Veo 3.1 — todos numa única plataforma.
+            </motion.p>
+
+            <motion.div variants={fadeUp} className="flex items-center justify-center gap-3 flex-wrap mb-10">
+              <Link href="/signup">
+                <Button size="xl" rightIcon={<ArrowRight size={18} />} className="shadow-[0_0_40px_rgba(34,211,238,0.35)]">
+                  Começar grátis
+                </Button>
+              </Link>
+              <a href="#video">
+                <Button variant="secondary" size="xl" leftIcon={<Play size={16} />}>
+                  Ver em ação
+                </Button>
+              </a>
+            </motion.div>
+
+            {/* Ticker de stats em tempo real */}
+            <motion.div variants={fadeUp} className="mb-10">
+              <StatsTicker />
+            </motion.div>
+
+            {/* Social proof bar */}
+            <motion.div variants={fadeUp} className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-sm text-muted">
+              <div className="flex items-center gap-1.5">
+                <div className="flex">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} size={14} className="fill-amber text-amber" />
+                  ))}
                 </div>
+                <span className="font-bold text-text">{SOCIAL_PROOF.rating}</span>
+                <span>de {SOCIAL_PROOF.creators} criadores</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Globe size={14} className="text-cyan" />
+                <span>Usado em {SOCIAL_PROOF.countries} países</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Shield size={14} className="text-green" />
+                <span>Uso comercial livre</span>
               </div>
             </motion.div>
-          ))}
+          </motion.div>
         </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mt-8 text-center"
-        >
-          <Link href="/signup">
-            <Button variant="secondary" size="lg">
-              Gerar imagens como essas
-              <ArrowRight size={16} />
-            </Button>
-          </Link>
-        </motion.div>
       </section>
 
-      {/* Features */}
-      <section className="relative z-20 max-w-6xl mx-auto px-6 pb-24">
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: "-100px" }}
-          className="text-center mb-14"
-        >
-          <PremiumBadge className="mb-4">Ferramentas</PremiumBadge>
-          <h2 className="text-4xl font-black mb-3">Tudo que você precisa para criar</h2>
-          <p className="text-muted max-w-xl mx-auto">
-            Do rascunho à arte final — ferramentas premium pra criar, editar e transformar.
-          </p>
-        </motion.div>
+      {/* ─── LOGO MARQUEE (modelos passando) ─── */}
+      <section className="relative py-6 sm:py-10 border-y border-white/5">
+        <p className="text-center text-[10px] font-bold uppercase tracking-[0.3em] text-dim mb-6">
+          16+ modelos de IA de última geração
+        </p>
+        <ModelMarqueeStack models={[...IMAGE_MODELS, ...VIDEO_MODELS]} />
+      </section>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {FEATURES.map((feature, i) => (
+      {/* ─── STATS BARR ─── */}
+      <Section className="py-10">
+        <ModelStatBar />
+      </Section>
+
+      {/* ─── USE CASES (cards com background image) ─── */}
+      <Section id="recursos" className="py-12 sm:py-20">
+        <SectionHeader
+          align="center"
+          badge={<PremiumBadge variant="purple" icon={<Sparkles size={11} />}>Use cases</PremiumBadge>}
+          title={<>Use cases que <GradientText>todo criador</GradientText> precisa</>}
+          description="Os 8 cenários mais populares — copy, modelo e prompt prontos pra usar."
+        />
+
+        <UseCasesGrid useCases={USE_CASES} />
+      </Section>
+
+      {/* ─── MODEL SHOWCASE (destaque épico individual) ─── */}
+      <Section id="modelos" className="py-12 sm:py-20">
+        <SectionHeader
+          align="center"
+          badge={<PremiumBadge variant="cyan" icon={<Cpu size={11} />}>Modelos</PremiumBadge>}
+          title={<>Cada modelo, um <GradientText>superpoder</GradientText></>}
+          description="Passe o mouse pra ver em tempo real. Clique pra experimentar."
+        />
+
+        <ModelShowcase models={VIDEO_MODELS.slice(0, 6)} />
+      </Section>
+
+      {/* ─── COMPARISON VÍDEO ─── */}
+      <Section id="comparar" className="py-12 sm:py-20">
+        <SectionHeader
+          align="center"
+          badge={<PremiumBadge variant="cyan" icon={<Zap size={11} />}>Comparativo</PremiumBadge>}
+          title={<>Qual modelo de <GradientText>vídeo</GradientText> usar?</>}
+          description="Comparação honesta entre os principais modelos do mercado."
+        />
+
+        <div className="space-y-12">
+          <ModelComparison
+            title={VIDEO_COMPARISON.title}
+            subtitle={VIDEO_COMPARISON.subtitle}
+            columns={VIDEO_COMPARISON.columns}
+            rows={VIDEO_COMPARISON.rows}
+            accent="cyan"
+          />
+
+          <ModelComparison
+            title={IMAGE_COMPARISON.title}
+            subtitle={IMAGE_COMPARISON.subtitle}
+            columns={IMAGE_COMPARISON.columns}
+            rows={IMAGE_COMPARISON.rows}
+            accent="purple"
+          />
+        </div>
+      </Section>
+
+      {/* ─── EPIC VIDEO GALLERY ─── */}
+      <Section id="video" className="py-12 sm:py-20">
+        <SectionHeader
+          align="center"
+          badge={<PremiumBadge variant="pink" icon={<Video size={11} />}>Vídeo IA</PremiumBadge>}
+          title={<>Vídeos <GradientText>cinematográficos</GradientText> com um clique</>}
+          description="Seedance 2.0, WAN 2.7, Veo 3.1, Sora 2 — passe o mouse pra ver o vídeo."
+        />
+
+        <EpicVideoGallery videos={EPIC_VIDEOS.slice(0, 9)} />
+      </Section>
+
+      {/* ─── EPIC PHOTO GALLERY (masonry) ─── */}
+      <Section id="galeria" className="py-12 sm:py-20">
+        <SectionHeader
+          align="center"
+          badge={<PremiumBadge variant="amber" icon={<Wand2 size={11} />}>Galeria</PremiumBadge>}
+          title={<>Imagens que <GradientText>pararam o scroll</GradientText></>}
+          description="Capas, anúncios, conceito, anime, lifestyle — tudo gerado por usuários do LISBOA."
+        />
+
+        <EpicPhotoGallery photos={EPIC_PHOTOS.slice(0, 15)} />
+      </Section>
+
+      {/* ─── FEATURES com tabs + SpotlightCard ─── */}
+      <Section className="py-12 sm:py-20">
+        <SectionHeader
+          align="center"
+          badge={<PremiumBadge variant="cyan" icon={<Sparkles size={11} />}>Ferramentas</PremiumBadge>}
+          title={<>12+ ferramentas <GradientText>premium</GradientText> numa só plataforma</>}
+          description="Tudo que você precisa pra criar como um pro, sem trocar de app."
+        />
+
+        <div className="flex justify-center mb-8">
+          <Tabs
+            value={activeCategory}
+            onChange={(v) => setActiveCategory(v as string)}
+            tabs={CATEGORIES.map((c) => ({ id: c.id, label: c.label, icon: <c.icon size={14} /> }))}
+          />
+        </div>
+
+        <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <AnimatePresence mode="popLayout">
+            {filteredFeatures.map((feature, i) => {
+              const Icon = ICON_MAP_NAV[feature.icon] || Sparkles;
+              const color = ["cyan", "purple", "pink", "green", "amber", "blue"][i % 6] as any;
+              return (
+                <motion.div
+                  key={feature.title}
+                  layout
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.3, delay: i * 0.04 }}
+                >
+                  <MouseSpotlight
+                    className="rounded-[20px] p-6 h-full border border-white/5 bg-card/40 backdrop-blur-sm hover:border-white/15 transition-colors"
+                    color="rgba(34, 211, 238, 0.1)"
+                  >
+                    <IconTile variant={color} size="lg" className="mb-4">
+                      <Icon size={24} />
+                    </IconTile>
+                    <h3 className="text-lg font-black mb-2">{feature.title}</h3>
+                    <p className="text-sm text-muted leading-relaxed mb-4">{feature.desc}</p>
+                    <div className="flex items-center gap-1.5 text-xs text-cyan font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+                      Saiba mais <ArrowRight size={12} />
+                    </div>
+                  </MouseSpotlight>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </motion.div>
+      </Section>
+
+      {/* ─── SPLIT SHOWCASE (antes/depois) ─── */}
+      <Section className="py-12 sm:py-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <PremiumBadge className="mb-4" variant="purple" icon={<Sparkle size={11} />}>Demonstração</PremiumBadge>
+            <h3 className="text-3xl sm:text-5xl font-black mb-4 leading-tight">
+              Foto parada vira <GradientText>vídeo em segundos</GradientText>
+            </h3>
+            <p className="text-muted leading-relaxed mb-6">
+              Faça upload de qualquer imagem e veja ela ganhar vida com movimento de câmera, expressão facial, animação de produto e muito mais. Sem prompt complicado — clique e pronto.
+            </p>
+            <ul className="space-y-2 text-sm text-muted">
+              {["Movimento de câmera suave", "Expressão facial realista", "Anima produto / personagem", "1080p · até 15s", "Compatível com qualquer imagem"].map((f) => (
+                <li key={f} className="flex items-center gap-2">
+                  <div className="w-4 h-4 rounded-full bg-cyan/20 flex items-center justify-center shrink-0">
+                    <Check size={10} className="text-cyan" />
+                  </div>
+                  {f}
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <EpicVideoCard
+              video={{
+                ...EPIC_VIDEOS[0],
+                title: "Foto original animada",
+                model: "Seedance 2.0",
+                category: "Demonstração",
+                prompt: "Foto estática transformada em vídeo cinematográfico com IA",
+                duration: "8s",
+                resolution: "1080p",
+                accent: "cyan",
+              }}
+              index={0}
+            />
+          </motion.div>
+        </div>
+      </Section>
+
+      {/* ─── STATS ─── */}
+      <Section className="py-12">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <StatCard value={SOCIAL_PROOF.creators} label="Criadores ativos" icon={<Heart size={18} />} color="pink" />
+          <StatCard value={SOCIAL_PROOF.images} label="Imagens geradas" icon={<ImageIcon size={18} />} color="cyan" />
+          <StatCard value="48k+" label="Vídeos criados" icon={<Video size={18} />} color="purple" />
+          <StatCard value={`${SOCIAL_PROOF.rating}★`} label="Avaliação média" icon={<Star size={18} />} color="amber" />
+        </div>
+      </Section>
+
+      {/* ─── MODEL CARDS (grid 3 colunas pra cada categoria) ─── */}
+      <Section className="py-12 sm:py-20">
+        <SectionHeader
+          align="center"
+          badge={<PremiumBadge variant="cyan" icon={<Cpu size={11} />}>Catálogo</PremiumBadge>}
+          title={<>Conheça <GradientText>todos os modelos</GradientText></>}
+          description="Cada modelo tem personalidade própria. Escolha o melhor pra cada projeto."
+        >
+          <div className="flex justify-center mt-4">
+            <Tabs
+              value={modelFilter}
+              onChange={(v) => setModelFilter(v as "all" | "image" | "video")}
+              tabs={[
+                { id: "all", label: "Todos", count: IMAGE_MODELS.length + VIDEO_MODELS.length },
+                { id: "image", label: "Imagem", count: IMAGE_MODELS.length, icon: <ImageIcon size={14} /> },
+                { id: "video", label: "Vídeo", count: VIDEO_MODELS.length, icon: <Video size={14} /> },
+              ]}
+            />
+          </div>
+        </SectionHeader>
+
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={modelFilter}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.4 }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+          >
+            {(modelFilter === "all"
+              ? [...IMAGE_MODELS, ...VIDEO_MODELS]
+              : modelFilter === "image"
+              ? IMAGE_MODELS
+              : VIDEO_MODELS
+            ).map((model, i) => (
+              <ModelCard key={model.id} model={model} index={i} />
+            ))}
+          </motion.div>
+        </AnimatePresence>
+      </Section>
+
+      {/* ─── TESTIMONIALS ─── */}
+      <Section id="depoimentos" className="py-12 sm:py-20">
+        <SectionHeader
+          align="center"
+          badge={<PremiumBadge variant="gold" icon={<Star size={11} />}>Depoimentos</PremiumBadge>}
+          title={<>Criadores que <GradientText>transformaram</GradientText> seu trabalho</>}
+          description="De YouTubers a agências, veja o que estão dizendo sobre o LISBOA."
+        />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {TESTIMONIALS.map((t, i) => (
             <motion.div
-              key={feature.title}
+              key={t.name}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
-              transition={{ delay: i * 0.08 }}
+              transition={{ delay: i * 0.08, duration: 0.5 }}
             >
-              <Card className="p-6 h-full group hover:border-cyan/20 hover:bg-white/[0.02] transition-all duration-500" glow="none">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan/20 to-purple/20 text-cyan flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                  <feature.icon size={20} />
+              <Card className="p-6 h-full flex flex-col" glow="none" hover>
+                <Quote className="text-cyan/30 mb-3" size={28} />
+                <p className="text-sm text-muted leading-relaxed mb-5 flex-1">&ldquo;{t.text}&rdquo;</p>
+                <div className="flex items-center gap-3">
+                  <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${t.color} flex items-center justify-center font-black text-white shadow-lg`}>
+                    {t.avatar}
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold">{t.name}</p>
+                    <p className="text-xs text-dim">{t.role}</p>
+                  </div>
+                  <div className="ml-auto flex">
+                    {[...Array(5)].map((_, k) => (
+                      <Star key={k} size={11} className="fill-amber text-amber" />
+                    ))}
+                  </div>
                 </div>
-                <h3 className="text-lg font-bold mb-2">{feature.title}</h3>
-                <p className="text-sm text-muted leading-relaxed">{feature.desc}</p>
               </Card>
             </motion.div>
           ))}
         </div>
-      </section>
+      </Section>
 
-      {/* Plans */}
-      <section className="relative z-20 max-w-6xl mx-auto px-6 pb-24">
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: "-100px" }}
-          className="text-center mb-14"
+      {/* ─── PLANS ─── */}
+      <Section id="planos" className="py-12 sm:py-20">
+        <SectionHeader
+          align="center"
+          badge={<PremiumBadge variant="cyan" icon={<Zap size={11} />}>Preços</PremiumBadge>}
+          title={<>Planos que <GradientText>cabem no bolso</GradientText></>}
+          description="Sem letras miúdas. Cancele quando quiser."
         >
-          <PremiumBadge className="mb-4">Preços</PremiumBadge>
-          <h2 className="text-4xl font-black mb-3">Planos simples e transparentes</h2>
-          <p className="text-muted">Escolha o plano ideal para o seu ritmo de criação.</p>
-        </motion.div>
+          <div className="flex justify-center mt-2">
+            <Tabs
+              value={billing}
+              onChange={(v) => setBilling(v as "monthly" | "yearly")}
+              tabs={[
+                { id: "monthly", label: "Mensal" },
+                { id: "yearly", label: "Anual · -30%" },
+              ]}
+            />
+          </div>
+        </SectionHeader>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-4xl mx-auto">
-          {[
-            { name: "Start", price: "R$ 14,90", pts: "120 pts/mês", highlight: false, features: ["120 pontos/mês", "Geração de imagens", "Editor básico", "Suporte email"] },
-            { name: "Pro", price: "R$ 34,90", pts: "320 pts/mês", highlight: true, features: ["320 pontos/mês", "Geração ilimitada", "Editor premium", "Anime Studio", "Suporte prioritário"] },
-            { name: "Ultra", price: "R$ 69,90", pts: "700 pts/mês", highlight: false, features: ["700 pontos/mês", "Tudo do Pro", "Avatar animado", "Modo Foco", "Suporte VIP"] },
-          ].map((plan, i) => (
-            <motion.div
-              key={plan.name}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-            >
-              <Card
-                className={`p-6 text-center relative h-full ${
-                  plan.highlight
-                    ? "border-cyan/40 shadow-[0_0_40px_rgba(34,211,238,0.12)] scale-105 md:scale-110 bg-card/80 backdrop-blur-sm"
-                    : ""
-                }`}
-                glow={plan.highlight ? "cyan" : "none"}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-5xl mx-auto">
+          {PLANS.map((plan, i) => {
+            const price = billing === "yearly" ? plan.price * yearlyDiscount : plan.price;
+            return (
+              <motion.div
+                key={plan.name}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, duration: 0.5 }}
+                className="relative"
               >
                 {plan.highlight && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <PremiumBadge> Mais usado</PremiumBadge>
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+                    <PremiumBadge variant="cyan" icon={<Flame size={11} />}>Mais popular</PremiumBadge>
                   </div>
                 )}
-                <div className="mt-4">
-                  <h3 className="text-xl font-black mb-1">{plan.name}</h3>
-                  <p className="text-4xl font-black mb-1">{plan.price}</p>
-                  <p className="text-sm text-muted mb-4">/mês · {plan.pts}</p>
-
-                  <div className="space-y-2 mb-6 text-left">
+                <Card
+                  className={`p-7 h-full flex flex-col ${plan.highlight ? "md:scale-105 border-cyan/30 bg-card/80" : ""}`}
+                  glow={plan.highlight ? "cyan" : "none"}
+                  hover={!plan.highlight}
+                >
+                  <div className="mb-5">
+                    <h3 className="text-2xl font-black mb-1">{plan.name}</h3>
+                    <p className="text-sm text-muted">{plan.tagline}</p>
+                  </div>
+                  <div className="mb-6">
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-sm text-muted">R$</span>
+                      <span className="text-5xl font-black">{price.toFixed(2).split(",")[0]}</span>
+                      <span className="text-sm text-muted">,{(price.toFixed(2).split(",")[1] || "00")}</span>
+                    </div>
+                    <p className="text-xs text-muted mt-1">/mês</p>
+                    <div className="mt-3 inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full bg-cyan/10 text-cyan border border-cyan/20 font-bold">
+                      <Zap size={11} /> {plan.pts} pontos inclusos
+                    </div>
+                  </div>
+                  <div className="space-y-2.5 mb-7 flex-1">
                     {plan.features.map((f) => (
-                      <div key={f} className="flex items-center gap-2 text-sm">
-                        <Check size={14} className="text-green shrink-0" />
+                      <div key={f} className="flex items-start gap-2.5 text-sm">
+                        <div className="shrink-0 mt-0.5 w-4 h-4 rounded-full bg-green/20 flex items-center justify-center">
+                          <Check size={10} className="text-green" />
+                        </div>
                         <span className="text-muted">{f}</span>
                       </div>
                     ))}
                   </div>
-
-                  <Link href="/signup">
-                    <Button variant={plan.highlight ? "primary" : "secondary"} className="w-full">
-                      Assinar {plan.name}
+                  <Link href="/signup" className="block">
+                    <Button variant={plan.highlight ? "primary" : "secondary"} fullWidth size="lg">
+                      {plan.highlight ? "Assinar Pro" : `Assinar ${plan.name}`}
                     </Button>
                   </Link>
-                </div>
-              </Card>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="relative z-20 max-w-3xl mx-auto px-6 pb-24">
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: "-100px" }}
-          className="text-center mb-12"
-        >
-          <PremiumBadge className="mb-4">FAQ</PremiumBadge>
-          <h2 className="text-3xl font-black mb-3">Perguntas frequentes</h2>
-        </motion.div>
-
-        <div className="space-y-3">
-          {FAQ.map((item, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.05 }}
-            >
-              <button
-                onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                className="w-full text-left"
-              >
-                <Card className={`p-4 transition-all ${openFaq === i ? "border-cyan/20 bg-white/[0.02]" : ""}`} glow="none">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-sm">{item.q}</span>
-                    <MessageSquare size={16} className={`text-dim transition-transform duration-300 ${openFaq === i ? "rotate-180 text-cyan" : ""}`} />
-                  </div>
-                  {openFaq === i && (
-                    <motion.p
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      className="text-sm text-muted mt-3 leading-relaxed"
-                    >
-                      {item.a}
-                    </motion.p>
-                  )}
                 </Card>
-              </button>
-            </motion.div>
-          ))}
+              </motion.div>
+            );
+          })}
         </div>
-      </section>
+        <p className="text-center text-xs text-dim mt-8">Todos os planos incluem 7 dias de garantia. Cancele quando quiser.</p>
+      </Section>
 
-      {/* Final CTA */}
-      <section className="relative z-20 max-w-4xl mx-auto px-6 pb-24">
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-        >
-          <Card className="p-10 md:p-14 text-center relative overflow-hidden" glow="cyan">
-            <div className="absolute inset-0 bg-gradient-to-br from-cyan/5 via-transparent to-purple/5 pointer-events-none" />
-            <div className="relative z-10">
-              <Sparkles size={40} className="mx-auto mb-4 text-cyan" />
-              <h2 className="text-3xl md:text-4xl font-black mb-3">Pronto para criar?</h2>
-              <p className="text-muted mb-6 max-w-md mx-auto">
-                Junte-se a milhares de criadores que já transformam suas ideias em arte com IA.
+      {/* ─── FAQ ─── */}
+      <Section id="faq" className="py-12 sm:py-20">
+        <SectionHeader
+          align="center"
+          badge={<PremiumBadge variant="purple" icon={<MessageSquare size={11} />}>FAQ</PremiumBadge>}
+          title={<>Perguntas <GradientText>frequentes</GradientText></>}
+          description="Tudo que você precisa saber antes de começar."
+        />
+
+        <div className="max-w-3xl mx-auto space-y-2.5">
+          {FAQ.map((item, i) => {
+            const open = openFaq === i;
+            return (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.04 }}
+              >
+                <button onClick={() => setOpenFaq(open ? null : i)} className="w-full text-left">
+                  <Card className={`p-5 transition-all ${open ? "border-cyan/30 bg-white/[0.03]" : ""}`} glow="none" hover={false}>
+                    <div className="flex items-center justify-between gap-4">
+                      <span className="font-bold text-sm sm:text-base">{item.q}</span>
+                      <div className={`shrink-0 w-6 h-6 rounded-full border border-white/10 flex items-center justify-center transition-all duration-300 ${open ? "rotate-45 bg-cyan/10 border-cyan/30" : ""}`}>
+                        <span className="text-cyan text-lg leading-none">+</span>
+                      </div>
+                    </div>
+                    <AnimatePresence>
+                      {open && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="overflow-hidden"
+                        >
+                          <p className="text-sm text-muted mt-4 leading-relaxed">{item.a}</p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </Card>
+                </button>
+              </motion.div>
+            );
+          })}
+        </div>
+      </Section>
+
+      {/* ─── FINAL CTA ─── */}
+      <Section className="py-12 sm:py-20">
+        <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
+          <Card className="relative p-10 sm:p-16 text-center overflow-hidden" glow="cyan" hover={false}>
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan/10 via-purple/5 to-pink/10" />
+            <AuroraBg intensity="high" hue="vivid" className="opacity-40" />
+            <NoiseOverlay opacity={0.03} />
+            <div className="relative z-10 max-w-2xl mx-auto">
+              <Sparkles size={48} className="mx-auto mb-5 text-cyan float" />
+              <h2 className="text-3xl sm:text-5xl font-black mb-4">
+                Sua próxima obra-prima está a <GradientText>um clique</GradientText>.
+              </h2>
+              <p className="text-muted text-base sm:text-lg mb-8 max-w-md mx-auto">
+                Junte-se a mais de 12 mil criadores que já transformam ideias em arte com IA.
               </p>
               <div className="flex items-center justify-center gap-3 flex-wrap">
                 <Link href="/signup">
-                  <Button size="lg" className="text-base px-10 py-4 shadow-[0_0_30px_rgba(34,211,238,0.3)]">
-                    Criar conta gratuita
-                    <ArrowRight size={18} />
-                  </Button>
+                  <PulsingCTA>Criar conta gratuita</PulsingCTA>
+                </Link>
+                <Link href="/login">
+                  <Button variant="secondary" size="xl">Já tenho conta</Button>
                 </Link>
               </div>
+              <p className="text-xs text-dim mt-6">Sem cartão · Sem compromisso · Cancele quando quiser</p>
             </div>
           </Card>
         </motion.div>
-      </section>
+      </Section>
 
-      {/* Footer */}
-      <footer className="relative z-20 border-t border-white/5 py-8 text-center">
-        <div className="max-w-6xl mx-auto px-6">
-          <LogoWordmark size={20} className="justify-center mb-3" />
-          <p className="text-sm text-dim">© 2026 LISBOA. Todos os direitos reservados.</p>
+      {/* ─── FOOTER ─── */}
+      <footer className="relative border-t border-white/5 py-12 mt-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
+            <div className="col-span-2 md:col-span-1">
+              <LogoWordmark size={24} />
+              <p className="text-xs text-muted mt-3 max-w-xs leading-relaxed">
+                Crie, edite e transforme imagens com IA premium. Feito pra criadores.
+              </p>
+            </div>
+            {[
+              { title: "Produto", links: [{ label: "Modelos", href: "#modelos" }, { label: "Vídeo IA", href: "#video" }, { label: "Galeria", href: "#galeria" }, { label: "Planos", href: "#planos" }] },
+              { title: "Empresa", links: [{ label: "Sobre", href: "#" }, { label: "Blog", href: "#" }, { label: "Contato", href: "#" }] },
+              { title: "Legal", links: [{ label: "Termos", href: "#" }, { label: "Privacidade", href: "#" }, { label: "Cookies", href: "#" }] },
+            ].map((col) => (
+              <div key={col.title}>
+                <p className="text-xs font-bold uppercase tracking-wider text-dim mb-3">{col.title}</p>
+                <ul className="space-y-2">
+                  {col.links.map((l) => (
+                    <li key={l.label}>
+                      <a href={l.href} className="text-sm text-muted hover:text-text transition-colors">{l.label}</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 border-t border-white/5">
+            <p className="text-xs text-dim">© 2026 LISBOA. Todos os direitos reservados.</p>
+            <p className="text-xs text-dim flex items-center gap-1.5">Feito com <Heart size={11} className="text-pink fill-pink" /> no Brasil</p>
+          </div>
         </div>
       </footer>
     </div>

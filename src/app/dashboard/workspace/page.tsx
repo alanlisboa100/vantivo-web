@@ -5,11 +5,12 @@ import { useAuth } from "@/lib/contexts/AuthContext";
 import { useI18n } from "@/lib/contexts/I18nContext";
 import { createClient } from "@/lib/supabase/client";
 import { NeonBackdrop, PremiumBadge } from "@/components/brand";
-import { Card, Button, Badge } from "@/components/ui";
+import { Card, Button, Badge, SmartVideo } from "@/components/ui/barrel";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils/cn";
 import { X, Download, Heart, Share2, Trash2, Clock } from "lucide-react";
 import { toast } from "sonner";
+import { HERO_VIDEOS } from "@/constants/samples";
 
 const FILTER_OPTIONS = [
   { key: "all", icon: "📋" },
@@ -152,12 +153,17 @@ export default function WorkspacePage() {
           </div>
         </div>
 
-        {/* Hero */}
+        {/* Hero com vídeo de fundo */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="relative min-h-[200px] rounded-[30px] bg-card/50 border border-white/5 p-6 mb-5 overflow-hidden"
         >
+          {/* Video background */}
+          <div className="absolute inset-0 opacity-30">
+            <SmartVideo src={HERO_VIDEOS[0].url} poster={HERO_VIDEOS[0].poster} className="w-full h-full" />
+            <div className="absolute inset-0 bg-gradient-to-br from-bg/70 via-bg/40 to-bg/70" />
+          </div>
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <div className="absolute -top-16 -right-10 w-[180px] h-[180px] rounded-full bg-purple/20 blur-[80px]" />
             <div className="absolute -bottom-10 -left-10 w-[150px] h-[150px] rounded-full bg-cyan/15 blur-[80px]" />

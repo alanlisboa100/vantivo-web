@@ -3,7 +3,7 @@
 import { useAuth } from "@/lib/contexts/AuthContext";
 import { useI18n } from "@/lib/contexts/I18nContext";
 import { NeonBackdrop, PremiumBadge } from "@/components/brand";
-import { Card, Button, Badge } from "@/components/ui";
+import { Card, Button, Badge } from "@/components/ui/barrel";
 import { motion } from "framer-motion";
 import { PLANS, EXTRA_POINT_PACKS } from "@/constants/theme";
 import { cn } from "@/lib/utils/cn";

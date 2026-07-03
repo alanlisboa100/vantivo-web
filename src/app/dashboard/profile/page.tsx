@@ -7,7 +7,7 @@ import { useI18n } from "@/lib/contexts/I18nContext";
 import { useTheme } from "@/lib/contexts/ThemeContext";
 import { createClient } from "@/lib/supabase/client";
 import { NeonBackdrop, PremiumBadge, AvatarCircle, PointsDisplay } from "@/components/brand";
-import { Card, Button, Badge, Input, Divider } from "@/components/ui";
+import { Card, Button, Badge, Input, Divider } from "@/components/ui/barrel";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import {

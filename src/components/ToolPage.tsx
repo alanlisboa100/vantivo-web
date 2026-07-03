@@ -31,7 +31,7 @@ export function ToolPage({ config }: { config: ToolConfig }) {
   const { points } = useAuth();
   const router = useRouter();
   const mutation = useAiMutation();
-  const [input, setInput] = useState("");
+  const [inputValue, setInputValue] = useState("");
   const [images, setImages] = useState<string[]>([]);
   const [result, setResult] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -53,7 +53,7 @@ export function ToolPage({ config }: { config: ToolConfig }) {
 
   const handleGenerate = async () => {
     const inputPayload: Record<string, unknown> = {
-      prompt: input || config.placeholder || "",
+      prompt: inputValue || config.placeholder || "",
     };
     if (images.length > 0) {
       inputPayload.images = config.acceptsMultipleImages ? images : [images[0]];
@@ -72,7 +72,7 @@ export function ToolPage({ config }: { config: ToolConfig }) {
 
       saveProject({
         type: config.action,
-        title: input ? input.slice(0, 60) : config.title,
+        title: inputValue ? inputValue.slice(0, 60) : config.title,
         description: `Criado com ${config.title}`,
         imageUrl: mediaUrl,
       });
@@ -110,7 +110,7 @@ export function ToolPage({ config }: { config: ToolConfig }) {
             {config.examples.map((ex, i) => (
               <button
                 key={i}
-                onClick={() => setInput(ex.label)}
+                onClick={() => setInputValue(ex.label)}
                 className="group flex-shrink-0 w-36 rounded-2xl overflow-hidden border border-white/5 hover:border-cyan/30 transition-all"
               >
                 <img src={ex.url} alt={ex.label} className="w-36 h-24 object-cover group-hover:scale-105 transition-transform" loading="lazy" />
@@ -159,8 +159,8 @@ export function ToolPage({ config }: { config: ToolConfig }) {
             {/* Text input */}
             <div className="flex gap-2">
               <input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleGenerate()}
                 placeholder={config.placeholder || "Descreva o que quer criar..."}
                 className="flex-1 bg-panel border border-white/10 rounded-xl px-4 py-3 text-sm text-text placeholder:text-dim/50 focus:outline-none focus:border-cyan/40 transition-colors"
